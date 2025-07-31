@@ -3,8 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "scripts": {
+    "build:cjs": "tsc --build tsconfig.build.json --outDir dist/cjs --module commonjs",
+    "build:esm": "tsc --build tsconfig.build.json --outDir dist/esm --module es2022",
+    "build": "npm run build:cjs && npm run build:esm",
+    "lint": "eslint '{src,examples}/**/*.{ts,js}' --fix",
+    "format": "prettier --write '{src,examples}/**/*.{ts,js,json,md}'",
+    "test": "jest",
+    "test:ci": "jest --coverage --coverageThreshold '{\"global\":{\"branches\":90,\"functions\":90,\"lines\":90,\"statements\":90}}'",
     "prepare": "husky install"
   },
   "keywords": [],
@@ -20,10 +26,7 @@
     "reflect-metadata": "^0.2.2"
   },
   "lint-staged": {
-    "src/**/*.{ts,js}": [
-      "eslint --fix",
-      "prettier --write"
-    ]
+    "src/**/*.{ts,js}": ["eslint --fix", "prettier --write"]
   },
   "devDependencies": {
     "@types/jest": "^30.0.0",
