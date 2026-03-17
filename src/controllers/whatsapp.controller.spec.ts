@@ -117,7 +117,7 @@ describe('WhatsAppController', () => {
     expect(() => controller.receive(req, signature)).toThrow('payload exceeds');
   });
 
-  it('should return empty string when challenge is undefined but mode/token valid', () => {
+  it('should reject verification when challenge is missing', () => {
     configValues['WHATSAPP_WEBHOOK_VERIFY_TOKEN'] = 'verify-token';
     const req = {
       query: {
@@ -126,6 +126,6 @@ describe('WhatsAppController', () => {
         // no 'hub.challenge'
       } as VerifyWebhookQuery,
     } as Request<Record<string, never>, unknown, unknown, VerifyWebhookQuery>;
-    expect(controller.verify(req)).toBe('');
+    expect(() => controller.verify(req)).toThrow();
   });
 });

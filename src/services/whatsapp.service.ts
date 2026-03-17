@@ -117,6 +117,8 @@ export class WhatsAppService implements OnModuleInit {
           | undefined;
         // Immediate mapping, no retry for auth errors
         if (status === 401 || status === 403) {
+          this.metrics?.incrementErrors(labels.type, labels.mode, String(status));
+          endTimer?.({ status: String(status) });
           throw new WhatsAppAuthException();
         }
         const isNetwork = !!(

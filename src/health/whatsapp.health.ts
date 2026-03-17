@@ -1,6 +1,14 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, Optional } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
+import type {
+  WhatsAppSandboxOptions,
+  WhatsAppLiveOptions,
+} from '../interfaces/whatsapp-client-options.interface';
+import {
+  WHATSAPP_RUNTIME_OPTIONS,
+  type WhatsAppRuntimeOptions,
+} from '../interfaces/whatsapp-runtime-options.interface';
 
 export interface HealthIndicatorResult {
   [key: string]: {
@@ -14,7 +22,16 @@ export class WhatsAppHealthIndicator {
   private readonly timeoutMs = Number(process.env.WHATSAPP_HEALTH_TIMEOUT_MS ?? '3000');
   private readonly skipExternalCheck = process.env.WHATSAPP_HEALTH_SKIP_EXTERNAL === 'true';
 
-  constructor(private readonly httpService: HttpService) {}
+  constructor(
+    private readonly httpService: HttpService,
+    @Optional()
+    @Inject('WHATSAPP_CLIENT_SANDBOX')
+    private readonly sandboxConfig?: WhatsAppSandboxOptions,
+    @Optional() @Inject('WHATSAPP_CLIENT_LIVE') private readonly liveConfig?: WhatsAppLiveOptions,
+    @Optional()
+    @Inject(WHATSAPP_RUNTIME_OPTIONS)
+    private readonly runtimeOptions?: WhatsAppRuntimeOptions
+  ) {}
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
     const configReady = this.hasConfig();
@@ -27,7 +44,7 @@ export class WhatsAppHealthIndicator {
         message: 'External check disabled via WHATSAPP_HEALTH_SKIP_EXTERNAL',
       });
     }
-    const version = process.env.WHATSAPP_GRAPH_API_VERSION ?? 'v17.0';
+    const version = this.runtimeOptions?.apiVersion ?? 'v17.0';
     const url = `https://graph.facebook.com/${version}`;
     try {
       await firstValueFrom(
@@ -45,24 +62,20 @@ export class WhatsAppHealthIndicator {
   }
 
   private hasConfig(): { ready: boolean; reason?: string } {
-    const mode = process.env.WHATSAPP_MODE;
-    if (!mode) {
-      return { ready: false, reason: 'WHATSAPP_MODE not set' };
+    if (!this.sandboxConfig && !this.liveConfig) {
+      return { ready: false, reason: 'No WhatsApp client configured' };
     }
-    if (mode === 'sandbox') {
+    if (this.sandboxConfig) {
       if (
-        !process.env.WHATSAPP_SANDBOX_PHONE_NUMBER_ID ||
-        !process.env.WHATSAPP_SANDBOX_ACCESS_TOKEN ||
-        !process.env.WHATSAPP_SANDBOX_TEST_RECIPIENTS
+        !this.sandboxConfig.testPhoneNumberId ||
+        !this.sandboxConfig.temporaryAccessToken ||
+        !this.sandboxConfig.testRecipients?.length
       ) {
-        return {
-          ready: false,
-          reason: 'Sandbox credentials incomplete',
-        };
+        return { ready: false, reason: 'Sandbox credentials incomplete' };
       }
     }
-    if (mode === 'live') {
-      if (!process.env.WHATSAPP_LIVE_PHONE_NUMBER_ID || !process.env.WHATSAPP_LIVE_ACCESS_TOKEN) {
+    if (this.liveConfig) {
+      if (!this.liveConfig.phoneNumberId || !this.liveConfig.accessToken) {
         return { ready: false, reason: 'Live credentials incomplete' };
       }
     }
