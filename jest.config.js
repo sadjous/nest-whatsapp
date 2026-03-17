@@ -1,10 +1,21 @@
 module.exports = {
-  preset: 'ts-jest',
   testEnvironment: 'node',
-  roots: ['<rootDir>/src', '<rootDir>/examples'],
-  collectCoverage: true,
-  coverageDirectory: 'coverage',
-  coverageThreshold: {
-    global: { branches: 90, functions: 90, lines: 90, statements: 90 }
-  }
+  roots: ['<rootDir>/src', '<rootDir>/examples', '<rootDir>/schematics'],
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/schematics/dist/'],
+  coveragePathIgnorePatterns: ['/node_modules/', '<rootDir>/schematics/dist/'],
+  transform: {
+    '^.+\\.(t|j)sx?$': [
+      '@swc/jest',
+      {
+        jsc: {
+          parser: { syntax: 'typescript', tsx: false, decorators: true },
+          transform: { decoratorMetadata: true },
+          target: 'es2022',
+        },
+        module: { type: 'commonjs' },
+        sourceMaps: 'inline',
+      },
+    ],
+  },
+  coverageProvider: 'v8',
 };

@@ -1,0 +1,193 @@
+import { Inject, Injectable } from '@nestjs/common';
+import {
+  WHATSAPP_MESSAGE_RECEIVED,
+  WHATSAPP_STATUS_RECEIVED,
+  WHATSAPP_TEXT_RECEIVED,
+  WHATSAPP_IMAGE_RECEIVED,
+  WHATSAPP_AUDIO_RECEIVED,
+  WHATSAPP_DOCUMENT_RECEIVED,
+  WHATSAPP_LOCATION_RECEIVED,
+  WHATSAPP_TEMPLATE_RECEIVED,
+  WHATSAPP_INTERACTIVE_RECEIVED,
+  WHATSAPP_CONTACTS_RECEIVED,
+  WHATSAPP_SYSTEM_RECEIVED,
+  WHATSAPP_ORDER_RECEIVED,
+  WHATSAPP_PRODUCT_RECEIVED,
+  WHATSAPP_REACTION_RECEIVED,
+  type WhatsAppMessageReceivedEvent,
+  type WhatsAppStatusEvent,
+  type WhatsAppTypedMessageEvent,
+  type WhatsAppEventMap,
+} from '../interfaces/events';
+
+export interface WhatsAppEventEmitter {
+  emit(event: string, payload: unknown): boolean;
+  on(event: string, listener: (...args: unknown[]) => void): void;
+  off(event: string, listener: (...args: unknown[]) => void): void;
+  onAny?(listener: (...args: unknown[]) => void): void;
+  offAny?(listener: (...args: unknown[]) => void): void;
+}
+
+export const WHATSAPP_EVENT_EMITTER = Symbol('WHATSAPP_EVENT_EMITTER');
+
+/** Internal typed emitter interface — single boundary cast, not exported. */
+interface TypedEventEmitter<TMap> {
+  emit<K extends keyof TMap>(event: K, payload: TMap[K]): boolean;
+  on<K extends keyof TMap>(event: K, listener: (payload: TMap[K]) => void): void;
+  off<K extends keyof TMap>(event: K, listener: (payload: TMap[K]) => void): void;
+}
+
+@Injectable()
+export class WhatsAppEvents {
+  private readonly typedEmitter: TypedEventEmitter<WhatsAppEventMap>;
+
+  constructor(@Inject(WHATSAPP_EVENT_EMITTER) emitter: WhatsAppEventEmitter) {
+    this.typedEmitter = emitter as unknown as TypedEventEmitter<WhatsAppEventMap>;
+  }
+
+  emitMessageReceived(payload: WhatsAppMessageReceivedEvent): boolean {
+    return this.typedEmitter.emit(WHATSAPP_MESSAGE_RECEIVED, payload);
+  }
+
+  onMessageReceived(listener: (payload: WhatsAppMessageReceivedEvent) => void): void {
+    this.typedEmitter.on(WHATSAPP_MESSAGE_RECEIVED, listener);
+  }
+
+  offMessageReceived(listener: (payload: WhatsAppMessageReceivedEvent) => void): void {
+    this.typedEmitter.off(WHATSAPP_MESSAGE_RECEIVED, listener);
+  }
+
+  emitStatusReceived(payload: WhatsAppStatusEvent): boolean {
+    return this.typedEmitter.emit(WHATSAPP_STATUS_RECEIVED, payload);
+  }
+  onStatusReceived(listener: (payload: WhatsAppStatusEvent) => void): void {
+    this.typedEmitter.on(WHATSAPP_STATUS_RECEIVED, listener);
+  }
+  offStatusReceived(listener: (payload: WhatsAppStatusEvent) => void): void {
+    this.typedEmitter.off(WHATSAPP_STATUS_RECEIVED, listener);
+  }
+
+  emitTextReceived(payload: WhatsAppTypedMessageEvent<'text'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_TEXT_RECEIVED, payload);
+  }
+  onTextReceived(listener: (payload: WhatsAppTypedMessageEvent<'text'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_TEXT_RECEIVED, listener);
+  }
+  offTextReceived(listener: (payload: WhatsAppTypedMessageEvent<'text'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_TEXT_RECEIVED, listener);
+  }
+
+  emitImageReceived(payload: WhatsAppTypedMessageEvent<'image'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_IMAGE_RECEIVED, payload);
+  }
+  onImageReceived(listener: (payload: WhatsAppTypedMessageEvent<'image'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_IMAGE_RECEIVED, listener);
+  }
+  offImageReceived(listener: (payload: WhatsAppTypedMessageEvent<'image'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_IMAGE_RECEIVED, listener);
+  }
+
+  emitAudioReceived(payload: WhatsAppTypedMessageEvent<'audio'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_AUDIO_RECEIVED, payload);
+  }
+  onAudioReceived(listener: (payload: WhatsAppTypedMessageEvent<'audio'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_AUDIO_RECEIVED, listener);
+  }
+  offAudioReceived(listener: (payload: WhatsAppTypedMessageEvent<'audio'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_AUDIO_RECEIVED, listener);
+  }
+
+  emitDocumentReceived(payload: WhatsAppTypedMessageEvent<'document'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_DOCUMENT_RECEIVED, payload);
+  }
+  onDocumentReceived(listener: (payload: WhatsAppTypedMessageEvent<'document'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_DOCUMENT_RECEIVED, listener);
+  }
+  offDocumentReceived(listener: (payload: WhatsAppTypedMessageEvent<'document'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_DOCUMENT_RECEIVED, listener);
+  }
+
+  emitLocationReceived(payload: WhatsAppTypedMessageEvent<'location'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_LOCATION_RECEIVED, payload);
+  }
+  onLocationReceived(listener: (payload: WhatsAppTypedMessageEvent<'location'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_LOCATION_RECEIVED, listener);
+  }
+  offLocationReceived(listener: (payload: WhatsAppTypedMessageEvent<'location'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_LOCATION_RECEIVED, listener);
+  }
+
+  emitTemplateReceived(payload: WhatsAppTypedMessageEvent<'template'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_TEMPLATE_RECEIVED, payload);
+  }
+  onTemplateReceived(listener: (payload: WhatsAppTypedMessageEvent<'template'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_TEMPLATE_RECEIVED, listener);
+  }
+  offTemplateReceived(listener: (payload: WhatsAppTypedMessageEvent<'template'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_TEMPLATE_RECEIVED, listener);
+  }
+
+  emitInteractiveReceived(payload: WhatsAppTypedMessageEvent<'interactive'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_INTERACTIVE_RECEIVED, payload);
+  }
+  onInteractiveReceived(
+    listener: (payload: WhatsAppTypedMessageEvent<'interactive'>) => void
+  ): void {
+    this.typedEmitter.on(WHATSAPP_INTERACTIVE_RECEIVED, listener);
+  }
+  offInteractiveReceived(
+    listener: (payload: WhatsAppTypedMessageEvent<'interactive'>) => void
+  ): void {
+    this.typedEmitter.off(WHATSAPP_INTERACTIVE_RECEIVED, listener);
+  }
+
+  emitContactsReceived(payload: WhatsAppTypedMessageEvent<'contacts'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_CONTACTS_RECEIVED, payload);
+  }
+  onContactsReceived(listener: (payload: WhatsAppTypedMessageEvent<'contacts'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_CONTACTS_RECEIVED, listener);
+  }
+  offContactsReceived(listener: (payload: WhatsAppTypedMessageEvent<'contacts'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_CONTACTS_RECEIVED, listener);
+  }
+
+  emitSystemReceived(payload: WhatsAppTypedMessageEvent<'system'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_SYSTEM_RECEIVED, payload);
+  }
+  onSystemReceived(listener: (payload: WhatsAppTypedMessageEvent<'system'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_SYSTEM_RECEIVED, listener);
+  }
+  offSystemReceived(listener: (payload: WhatsAppTypedMessageEvent<'system'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_SYSTEM_RECEIVED, listener);
+  }
+
+  emitOrderReceived(payload: WhatsAppTypedMessageEvent<'order'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_ORDER_RECEIVED, payload);
+  }
+  onOrderReceived(listener: (payload: WhatsAppTypedMessageEvent<'order'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_ORDER_RECEIVED, listener);
+  }
+  offOrderReceived(listener: (payload: WhatsAppTypedMessageEvent<'order'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_ORDER_RECEIVED, listener);
+  }
+
+  emitProductReceived(payload: WhatsAppTypedMessageEvent<'product'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_PRODUCT_RECEIVED, payload);
+  }
+  onProductReceived(listener: (payload: WhatsAppTypedMessageEvent<'product'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_PRODUCT_RECEIVED, listener);
+  }
+  offProductReceived(listener: (payload: WhatsAppTypedMessageEvent<'product'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_PRODUCT_RECEIVED, listener);
+  }
+
+  emitReactionReceived(payload: WhatsAppTypedMessageEvent<'reaction'>): boolean {
+    return this.typedEmitter.emit(WHATSAPP_REACTION_RECEIVED, payload);
+  }
+  onReactionReceived(listener: (payload: WhatsAppTypedMessageEvent<'reaction'>) => void): void {
+    this.typedEmitter.on(WHATSAPP_REACTION_RECEIVED, listener);
+  }
+  offReactionReceived(listener: (payload: WhatsAppTypedMessageEvent<'reaction'>) => void): void {
+    this.typedEmitter.off(WHATSAPP_REACTION_RECEIVED, listener);
+  }
+}

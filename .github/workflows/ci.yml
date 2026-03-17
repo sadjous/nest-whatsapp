@@ -1,14 +1,24 @@
 name: CI
-on: [push, pull_request]
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [master]
 jobs:
   build-test:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: "20"
       - run: npm ci
-      - run: npm run lint
       - run: npm run build
+      - run: npm run lint
       - run: npm run test:ci
+      - name: Security audit
+        run: npm audit --audit-level=critical
+      - name: Pack dry run
+        run: npm pack --json

@@ -1,0 +1,5 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "./schematics/whatsapp/collection.json",
+  "sourceRoot": "src"
+}

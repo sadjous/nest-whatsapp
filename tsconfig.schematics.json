@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "schematics/dist",
+    "rootDir": "schematics",
+    "module": "CommonJS",
+    "declaration": true,
+    "target": "ES2019"
+  },
+  "include": ["schematics/**/*.ts"],
+  "exclude": ["node_modules", "dist", "schematics/dist"]
+}

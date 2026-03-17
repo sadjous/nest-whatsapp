@@ -22,3 +22,11 @@ lerna-debug.log*
 # temp directory
 .temp
 .tmp
+coverage/
+.DS_Store
+.vscode/
+.husky/
+docs/
+schematics/dist/
+*.tgz
+firebase-debug.log

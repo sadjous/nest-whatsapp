@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/schema",
+  "id": "WhatsAppOptionsSchema",
+  "title": "WhatsApp Options Schema",
+  "type": "object",
+  "properties": {
+    "module": {
+      "type": "string",
+      "description": "Path to the module file",
+      "default": "src/app.module.ts"
+    },
+    "mode": { "type": "string", "enum": ["sandbox", "live"], "default": "sandbox" },
+    "addHealth": { "type": "boolean", "default": false },
+    "addMicro": { "type": "boolean", "default": false },
+    "host": { "type": "string", "default": "127.0.0.1" },
+    "port": { "type": "number", "default": 4000 },
+    "testPhoneNumberId": { "type": "string" },
+    "temporaryAccessToken": { "type": "string" },
+    "testRecipients": { "type": "array", "items": { "type": "string" } },
+    "businessAccountId": { "type": "string" },
+    "phoneNumberId": { "type": "string" },
+    "accessToken": { "type": "string" }
+  }
+}
