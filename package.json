@@ -39,7 +39,7 @@
     "./package.json": "./package.json"
   },
   "dependencies": {
-    "axios": "^1.11.0",
+    "axios": "^1.13.6",
     "joi": "^17.13.3",
     "prom-client": "^14.2.0",
     "reflect-metadata": "^0.2.2"
