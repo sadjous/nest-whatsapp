@@ -53,11 +53,14 @@ describe('WhatsAppHealthIndicator', () => {
     const http = { get: jest.fn() } as unknown as HttpService;
     const originalEnv = process.env.WHATSAPP_HEALTH_SKIP_EXTERNAL;
     process.env.WHATSAPP_HEALTH_SKIP_EXTERNAL = 'true';
-    const indicator = new WhatsAppHealthIndicator(http, sandboxConfig);
-    const result = await indicator.isHealthy('wa');
-    expect(result.wa.status).toBe('up');
-    expect(http.get).not.toHaveBeenCalled();
-    process.env.WHATSAPP_HEALTH_SKIP_EXTERNAL = originalEnv;
+    try {
+      const indicator = new WhatsAppHealthIndicator(http, sandboxConfig);
+      const result = await indicator.isHealthy('wa');
+      expect(result.wa.status).toBe('up');
+      expect(http.get).not.toHaveBeenCalled();
+    } finally {
+      process.env.WHATSAPP_HEALTH_SKIP_EXTERNAL = originalEnv;
+    }
   });
 
   it('performs shallow check with timeout when config present', async () => {

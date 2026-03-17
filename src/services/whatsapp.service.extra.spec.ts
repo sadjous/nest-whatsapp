@@ -49,15 +49,15 @@ describe('WhatsAppService extra coverage', () => {
     );
   });
 
-  it('sendAudio live (includes caption)', async () => {
-    await service.sendAudio('+222', 'http://audio', 'cap', 'live');
+  it('sendAudio live', async () => {
+    await service.sendAudio('+222', 'http://audio', 'live');
     expect(httpService.post).toHaveBeenCalledWith(
       'https://graph.facebook.com/v17.0/456/messages',
       {
         messaging_product: 'whatsapp',
         to: '+222',
         type: 'audio',
-        audio: { link: 'http://audio', caption: 'cap' },
+        audio: { link: 'http://audio' },
       },
       expect.objectContaining({ headers: { Authorization: 'Bearer live-token' } })
     );

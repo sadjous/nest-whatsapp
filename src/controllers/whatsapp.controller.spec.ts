@@ -117,6 +117,36 @@ describe('WhatsAppController', () => {
     expect(() => controller.receive(req, signature)).toThrow('payload exceeds');
   });
 
+  it('should enforce max body limit from process.env when ConfigService is absent', async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [WhatsAppController],
+      providers: [
+        { provide: WHATSAPP_EVENT_EMITTER, useValue: new EventEmitter2() },
+        WhatsAppEvents,
+        // No ConfigService — controller falls back to process.env
+        { provide: WhatsAppMetricsService, useValue: metrics },
+      ],
+    }).compile();
+    const noConfigController = module.get<WhatsAppController>(WhatsAppController);
+
+    const originalEnv = process.env.WHATSAPP_APP_SECRET;
+    const originalMax = process.env.WHATSAPP_WEBHOOK_MAX_BODY_BYTES;
+    process.env.WHATSAPP_APP_SECRET = 'env-secret';
+    process.env.WHATSAPP_WEBHOOK_MAX_BODY_BYTES = '1';
+    try {
+      const rawBody = Buffer.from([0, 1]);
+      const signature =
+        'sha256=' + crypto.createHmac('sha256', 'env-secret').update(rawBody).digest('hex');
+      const req = unsafeCast<
+        Request & RawBodyRequestLike<WhatsAppWebhookPayload, Record<string, never>>
+      >({ body: {}, rawBody });
+      expect(() => noConfigController.receive(req, signature)).toThrow('payload exceeds');
+    } finally {
+      process.env.WHATSAPP_APP_SECRET = originalEnv;
+      process.env.WHATSAPP_WEBHOOK_MAX_BODY_BYTES = originalMax;
+    }
+  });
+
   it('should reject verification when challenge is missing', () => {
     configValues['WHATSAPP_WEBHOOK_VERIFY_TOKEN'] = 'verify-token';
     const req = {

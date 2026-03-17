@@ -21,7 +21,7 @@ export class WhatsAppController {
   @Post('audio')
   sendAudio(@Body() body: { to: string; url: string }) {
     const mode: WhatsAppMode = process.env.WHATSAPP_MODE === 'sandbox' ? 'sandbox' : 'live';
-    return this.wa.sendAudio(body.to, body.url, '', mode);
+    return this.wa.sendAudio(body.to, body.url, mode);
   }
 
   @Post('document')

@@ -2,6 +2,26 @@ import { Test } from '@nestjs/testing';
 import { WhatsAppModule } from './whatsapp.module';
 import { WhatsAppClientOptions } from './interfaces/whatsapp-client-options.interface';
 
+describe('WhatsAppModule.forRoot', () => {
+  it('binds synchronous config to the correct client token', async () => {
+    const config: WhatsAppClientOptions = {
+      mode: 'sandbox',
+      testPhoneNumberId: 'pn-sync',
+      temporaryAccessToken: 'tok-sync',
+      testRecipients: ['+10000000001'],
+    };
+
+    const moduleRef = await Test.createTestingModule({
+      imports: [WhatsAppModule.forRoot(config)],
+    }).compile();
+
+    const resolved = moduleRef.get<WhatsAppClientOptions>('WHATSAPP_CLIENT_SANDBOX');
+    expect(resolved).toEqual(config);
+
+    await moduleRef.close();
+  });
+});
+
 describe('WhatsAppModule.forRootAsync', () => {
   it('binds async factory output to sandbox token', async () => {
     const sandboxConfig: WhatsAppClientOptions = {

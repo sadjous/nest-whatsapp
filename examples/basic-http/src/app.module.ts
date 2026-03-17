@@ -7,7 +7,6 @@ import { WaEventsLogger } from './wa-events.logger';
 import { WaMicroClientService } from './wa-micro-client.service';
 import { TerminusModule } from '@nestjs/terminus';
 import { WhatsAppController } from './whatsapp.controller';
-import { WebhookController } from './webhook.controller';
 import { MetricsController } from './metrics.controller';
 import { WaMicroController } from './wa-micro.controller';
 import { WhatsAppModule as WA } from '@sadjous/nest-whatsapp';
@@ -50,13 +49,7 @@ import { WhatsAppModule as WA } from '@sadjous/nest-whatsapp';
       clientName: 'WA_CLIENT',
     }),
   ],
-  controllers: [
-    WhatsAppController,
-    HealthController,
-    WebhookController,
-    MetricsController,
-    WaMicroController,
-  ],
+  controllers: [WhatsAppController, HealthController, MetricsController, WaMicroController],
   providers: [WaEventsLogger, WaMicroClientService],
 })
 export class AppModule {}

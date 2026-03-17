@@ -154,6 +154,8 @@ export class WhatsAppModule {
     };
   }
 
+  // forMicroservice registers a TCP client only — it does not mount the webhook controller.
+  // If you also need webhook handling, import WhatsAppModule.forRoot/forRootAsync separately.
   static forMicroservice(options: WhatsAppMicroserviceOptions): DynamicModule {
     if (options.clientName !== undefined && !options.clientName.trim()) {
       throw new Error('WhatsAppModule.forMicroservice clientName must be a non-empty string');

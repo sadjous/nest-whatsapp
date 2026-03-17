@@ -208,7 +208,6 @@ export class WhatsAppService implements OnModuleInit {
   async sendAudio(
     to: string,
     audioUrl: string,
-    caption: string,
     clientName: WhatsAppMode = 'live',
     replyToMessageId?: string
   ): Promise<string> {
@@ -218,7 +217,7 @@ export class WhatsAppService implements OnModuleInit {
       messaging_product: 'whatsapp',
       to,
       type: 'audio',
-      audio: { link: audioUrl, caption },
+      audio: { link: audioUrl },
       ...(replyToMessageId ? { context: { message_id: replyToMessageId } } : {}),
     };
     this.ensureSandboxRecipient(to, config);
