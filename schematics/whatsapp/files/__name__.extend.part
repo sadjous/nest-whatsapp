@@ -1,0 +1,1 @@
+"  WhatsAppModule.forRoot({ mode: 'sandbox', testPhoneNumberId: '<id>', temporaryAccessToken: '<token>', testRecipients: ['+1234567890'] }),"

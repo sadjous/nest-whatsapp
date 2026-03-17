@@ -1,0 +1,9 @@
+{
+  "schematics": {
+    "whatsapp": {
+      "description": "Generate WhatsApp integration code",
+      "schema": "./schema.json",
+      "factory": "../dist/whatsapp/index.js#whatsapp"
+    }
+  }
+}
