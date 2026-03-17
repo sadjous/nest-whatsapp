@@ -14,7 +14,7 @@
     "dotenv": "^16.4.5",
     "rxjs": "^7.0.0",
     "class-transformer": "^0.5.1",
-    "class-validator": "^0.14.1"
+    "class-validator": "^0.15.1"
   },
   "devDependencies": {
     "@nestjs/cli": "^10.4.5",
