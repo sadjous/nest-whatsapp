@@ -16,6 +16,11 @@ export class WebhookController {
     private readonly config: ConfigService
   ) {}
 
+  private sanitizeChallenge(challenge: string | undefined): string {
+    if (!challenge) return '';
+    return challenge.replace(/[^0-9A-Za-z=_-]/g, '');
+  }
+
   @Get()
   verify(@Req() req: Request<Record<string, never>, unknown, unknown, VerifyWebhookQuery>): string {
     const mode = req.query['hub.mode'];
@@ -25,7 +30,7 @@ export class WebhookController {
       mode === 'subscribe' &&
       token === this.config.get<string>('WHATSAPP_WEBHOOK_VERIFY_TOKEN')
     ) {
-      return challenge ?? '';
+      return this.sanitizeChallenge(challenge);
     }
     throw new UnauthorizedException();
   }

@@ -31,12 +31,21 @@ export class WhatsAppController {
   verify(@Req() req: Request<Record<string, never>, unknown, unknown, VerifyWebhookQuery>): string {
     const mode = req.query['hub.mode'];
     const token = req.query['hub.verify_token'];
-    const challenge = req.query['hub.challenge'] as string | undefined;
+    const rawChallenge = req.query['hub.challenge'];
     if (
       mode === 'subscribe' &&
       token === this.configService.get<string>('WHATSAPP_WEBHOOK_VERIFY_TOKEN')
     ) {
-      return challenge ?? '';
+      const challenge = typeof rawChallenge === 'string' ? rawChallenge : '';
+      const MAX_CHALLENGE_LENGTH = 256;
+      if (
+        challenge.length === 0 ||
+        challenge.length > MAX_CHALLENGE_LENGTH ||
+        !/^[A-Za-z0-9._-]+$/.test(challenge)
+      ) {
+        throw new UnauthorizedException();
+      }
+      return challenge;
     }
     throw new UnauthorizedException();
   }
