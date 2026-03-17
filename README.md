@@ -190,7 +190,7 @@ export class MessageHandlerService implements OnModuleInit {
 }
 ```
 
-> Tip: install `eventemitter2` or `@nestjs/event-emitter` if you want wildcard listeners (`onAny`). Without them the module falls back to Node’s `events` emitter, which supports the same API used here but without the extra helpers.
+> Tip: install `eventemitter2` or `@nestjs/event-emitter` if you want wildcard listeners. Without them the module falls back to Node’s `events` emitter, which supports the same API used here but without the extra helpers.
 
 ### Microservice Transport
 
@@ -213,7 +213,7 @@ export class MetricsController {
 }
 ```
 
-Exposed Prometheus metrics (names are stable and safe to scrape):
+Exposed Prometheus metrics:
 
 - `whatsapp_messages_sent_total` — counter, increments on successful message sends. Labels: `type`, `mode`.
 - `whatsapp_errors_total` — counter, increments on send errors. Labels: `type`, `mode`, `status`.
@@ -279,7 +279,7 @@ export class MessageHandlerService implements OnModuleInit {
 
 - Install peer: `npm i -S @nestjs/terminus`
 - Import health providers only when needed:
-- `WHATSAPP_HEALTH_TIMEOUT_MS` controls the outbound probe timeout; use `WHATSAPP_HEALTH_SKIP_EXTERNAL=true` for environments without egress (config readiness is still checked).
+- `WHATSAPP_HEALTH_TIMEOUT_MS` controls the outbound probe timeout; use `WHATSAPP_HEALTH_SKIP_EXTERNAL=true` for environments without egress.
 
 ```ts
 import { Module } from '@nestjs/common';
@@ -319,7 +319,7 @@ nest generate whatsapp
 
 ### Schematic Usage (standalone)
 
-- Build first (includes schematics): `npm run build`
+- Build first: `npm run build`
 - Sandbox with health + micro:
   - `npx schematics @sadjous/nest-whatsapp:whatsapp --module=src/app.module.ts --mode=sandbox --add-health --add-micro --host=127.0.0.1 --port=4000`
 - Sandbox with explicit creds:
@@ -375,7 +375,7 @@ npx typedoc --out docs src
   - `WHATSAPP_MICROSERVICE_HOST=127.0.0.1`
   - `WHATSAPP_MICROSERVICE_PORT=4000`
 - Run: `npm run example:micro`
-- Run demo client (with the microservice online): `npm --prefix examples/microservice run demo`
+- Run demo client: `npm --prefix examples/microservice run demo`
 
 ## License
 
