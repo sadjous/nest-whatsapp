@@ -23,7 +23,7 @@ import { WhatsAppMetricsService } from '../services/whatsapp.metrics';
 export class WhatsAppController {
   constructor(
     private readonly events: WhatsAppEvents,
-    private readonly configService: ConfigService,
+    @Optional() private readonly configService?: ConfigService,
     @Optional() private readonly metrics?: WhatsAppMetricsService
   ) {}
 
@@ -34,7 +34,9 @@ export class WhatsAppController {
     const rawChallenge = req.query['hub.challenge'];
     if (
       mode === 'subscribe' &&
-      token === this.configService.get<string>('WHATSAPP_WEBHOOK_VERIFY_TOKEN')
+      token ===
+        (this.configService?.get<string>('WHATSAPP_WEBHOOK_VERIFY_TOKEN') ??
+          process.env['WHATSAPP_WEBHOOK_VERIFY_TOKEN'])
     ) {
       const challenge = typeof rawChallenge === 'string' ? rawChallenge : '';
       const MAX_CHALLENGE_LENGTH = 256;
@@ -56,7 +58,8 @@ export class WhatsAppController {
     @Headers('x-hub-signature-256') signature?: string
   ): string {
     const rawBody = req.rawBody as Buffer | undefined;
-    const appSecret = this.configService.get<string>('WHATSAPP_APP_SECRET');
+    const appSecret =
+      this.configService?.get<string>('WHATSAPP_APP_SECRET') ?? process.env['WHATSAPP_APP_SECRET'];
     const maxBodyBytes = this.resolveMaxBodyBytes();
     if (!appSecret || !rawBody || !signature) {
       throw new UnauthorizedException();
@@ -84,7 +87,9 @@ export class WhatsAppController {
   }
 
   private resolveMaxBodyBytes(): number {
-    const fromConfig = this.configService.get<number | string>('WHATSAPP_WEBHOOK_MAX_BODY_BYTES');
+    const fromConfig =
+      this.configService?.get<number | string>('WHATSAPP_WEBHOOK_MAX_BODY_BYTES') ??
+      process.env['WHATSAPP_WEBHOOK_MAX_BODY_BYTES'];
     const parsed = Number(fromConfig ?? 2_000_000);
     return Number.isFinite(parsed) && parsed > 0 ? parsed : 2_000_000;
   }

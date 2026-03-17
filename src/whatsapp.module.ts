@@ -11,6 +11,7 @@ import {
   type WhatsAppEventEmitter,
 } from './services/whatsapp.events';
 import { WhatsAppWebhookProcessor } from './services/whatsapp.webhook-processor';
+import { WhatsAppController } from './controllers/whatsapp.controller';
 import type { EventEmitter } from 'events';
 import {
   WHATSAPP_RUNTIME_OPTIONS,
@@ -98,6 +99,7 @@ export class WhatsAppModule {
     return {
       module: WhatsAppModule,
       imports: [createHttpModule()],
+      controllers: [WhatsAppController],
       providers: [
         // Provide an EventEmitter instance (EventEmitter2 if available, else Node's EventEmitter)
         eventEmitterProvider,
@@ -137,6 +139,7 @@ export class WhatsAppModule {
     return {
       module: WhatsAppModule,
       imports: [createHttpModule(), ...(options.imports ?? [])],
+      controllers: [WhatsAppController],
       providers: [
         eventEmitterProvider,
         runtimeOptionsProvider,
