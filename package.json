@@ -124,8 +124,13 @@
     "js-yaml": "^4.1.1"
   },
   "files": [
-    "dist/**",
-    "schematics/**",
+    "dist/cjs/**/*.js",
+    "dist/esm/**/*.js",
+    "dist/esm/**/*.d.ts",
+    "schematics/dist/**",
+    "schematics/whatsapp/collection.json",
+    "schematics/whatsapp/schema.json",
+    "schematics/whatsapp/files/",
     "README.md",
     "LICENSE"
   ],

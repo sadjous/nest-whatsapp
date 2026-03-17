@@ -1,0 +1,27 @@
+# Source maps — not needed by consumers
+dist/**/*.js.map
+dist/**/*.d.ts.map
+
+# macOS metadata
+**/.DS_Store
+
+# Schematic source and tests (only compiled schematics/dist/ is needed)
+schematics/**/*.ts
+schematics/**/__mocks__/
+
+# Dev & CI config
+.github/
+src/
+examples/
+coverage/
+docs/
+*.tgz
+.env*
+tsconfig*.json
+jest.config.*
+eslint.config.*
+.commitlintrc*
+.prettierrc*
+.releaserc*
+simple-git-hooks*
+lint-staged*
