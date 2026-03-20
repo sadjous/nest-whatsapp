@@ -34,7 +34,7 @@ export function whatsapp(options: Options): Rule {
       const change = insertImport(sourceFile, modulePath, symbol, file);
       if (change) importChanges.push(change);
     };
-    maybeImport('WhatsAppModule', '@SoftZenIT/nest-whatsapp');
+    maybeImport('WhatsAppModule', 'nest-whatsapp');
     maybeImport('ConfigModule', '@nestjs/config');
     maybeImport('ConfigService', '@nestjs/config');
 

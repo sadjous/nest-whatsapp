@@ -1,6 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { WhatsAppService } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppService } from 'nest-whatsapp';
 import type { WhatsAppMode } from '../../../src/interfaces/whatsapp-client-options.interface';
 import {
   SendDocumentDto,

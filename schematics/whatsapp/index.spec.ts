@@ -25,7 +25,7 @@ describe('whatsapp schematic', () => {
     });
     const tree = rule(createAppModule(), {} as any) as UnitTestTree;
     const content = tree.readContent('src/app.module.ts');
-    expect(content).toContain("import { WhatsAppModule } from '@SoftZenIT/nest-whatsapp'");
+    expect(content).toContain("import { WhatsAppModule } from 'nest-whatsapp'");
     expect(content).toContain("import { ConfigModule } from '@nestjs/config'");
     expect(content).toContain("import { ConfigService } from '@nestjs/config'");
     expect(content).toContain('WhatsAppModule.forHealth()');
@@ -47,7 +47,7 @@ describe('whatsapp schematic', () => {
     });
     const tree = rule(createAppModule(), {} as any) as UnitTestTree;
     const content = tree.readContent('src/app.module.ts');
-    expect(content).toContain("import { WhatsAppModule } from '@SoftZenIT/nest-whatsapp'");
+    expect(content).toContain("import { WhatsAppModule } from 'nest-whatsapp'");
     expect(content).toContain('WhatsAppModule.forRootAsync');
     expect(content).toContain(
       "businessAccountId: config.get<string>('WHATSAPP_LIVE_BUSINESS_ACCOUNT_ID') ?? 'b'"
@@ -61,7 +61,7 @@ describe('whatsapp schematic', () => {
     tree.overwrite(
       'src/app.module.ts',
       `import { Module } from '@nestjs/common';
-       import { WhatsAppModule } from '@SoftZenIT/nest-whatsapp';
+       import { WhatsAppModule } from 'nest-whatsapp';
        @Module({ imports: [], controllers: [], providers: [] })
        export class AppModule {}`
     );

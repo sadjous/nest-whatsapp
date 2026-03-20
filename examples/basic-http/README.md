@@ -1,6 +1,6 @@
 # Basic HTTP Example
 
-A minimal NestJS app using `@SoftZenIT/nest-whatsapp` over HTTP.
+A minimal NestJS app using `nest-whatsapp` over HTTP.
 
 ## Setup
 

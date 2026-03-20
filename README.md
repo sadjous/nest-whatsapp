@@ -1,6 +1,6 @@
-# @SoftZenIT/nest-whatsapp
+# nest-whatsapp
 
-[![npm version](https://img.shields.io/npm/v/@SoftZenIT/nest-whatsapp)](https://www.npmjs.com/package/@SoftZenIT/nest-whatsapp)
+[![npm version](https://img.shields.io/npm/v/nest-whatsapp)](https://www.npmjs.com/package/nest-whatsapp)
 [![Build Status](https://github.com/SoftZenIT/nest-whatsapp/actions/workflows/ci.yml/badge.svg)](https://github.com/SoftZenIT/nest-whatsapp/actions)
 [![Coverage Status](https://coveralls.io/repos/github/SoftZenIT/nest-whatsapp/badge.svg?branch=main)](https://coveralls.io/github/SoftZenIT/nest-whatsapp?branch=main)
 [![Docs](https://img.shields.io/badge/docs-pages-blue)](https://SoftZenIT.github.io/nest-whatsapp/)
@@ -23,7 +23,7 @@ NestJS module for seamless integration with the WhatsApp Cloud API, supporting s
 ## Quickstart
 
 ```bash
-npm install @SoftZenIT/nest-whatsapp
+npm install nest-whatsapp
 ```
 
 **Step 1:** Create the config file `src/config/whatsapp.config.ts`:
@@ -83,7 +83,7 @@ export const WhatsappConfigSchema = Joi.object({
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import whatsappConfig, { WhatsappConfigSchema } from './config/whatsapp.config';
-import { WhatsAppModule } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppModule } from 'nest-whatsapp';
 
 @Module({
   imports: [
@@ -152,7 +152,7 @@ To override the global HTTP/retry/logging defaults via DI instead of environment
 
 ```ts
 import { Module } from '@nestjs/common';
-import { WhatsAppModule, WHATSAPP_RUNTIME_OPTIONS } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppModule, WHATSAPP_RUNTIME_OPTIONS } from 'nest-whatsapp';
 
 @Module({
   imports: [WhatsAppModule.forRoot(/* ... */)],
@@ -176,7 +176,7 @@ The webhook endpoint (`GET/POST /whatsapp/webhook`) is **automatically registere
 
 ```ts
 import { Injectable, OnModuleInit } from ‘@nestjs/common’;
-import { WhatsAppEvents } from ‘@SoftZenIT/nest-whatsapp’;
+import { WhatsAppEvents } from ‘nest-whatsapp’;
 
 @Injectable()
 export class MessageHandlerService implements OnModuleInit {
@@ -255,7 +255,7 @@ app.use(
 
 ```ts
 import { Injectable, OnModuleInit } from '@nestjs/common';
-import { WhatsAppEvents } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppEvents } from 'nest-whatsapp';
 
 @Injectable()
 export class MessageHandlerService implements OnModuleInit {
@@ -283,7 +283,7 @@ export class MessageHandlerService implements OnModuleInit {
 
 ```ts
 import { Module } from '@nestjs/common';
-import { WhatsAppModule } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppModule } from 'nest-whatsapp';
 
 @Module({
   imports: [WhatsAppModule.forHealth()],
@@ -298,7 +298,7 @@ export class HealthModule {}
 
 ```ts
 import { Module } from '@nestjs/common';
-import { WhatsAppModule } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppModule } from 'nest-whatsapp';
 
 @Module({
   imports: [
@@ -321,11 +321,11 @@ nest generate whatsapp
 
 - Build first: `npm run build`
 - Sandbox with health + micro:
-  - `npx schematics @SoftZenIT/nest-whatsapp:whatsapp --module=src/app.module.ts --mode=sandbox --add-health --add-micro --host=127.0.0.1 --port=4000`
+  - `npx schematics nest-whatsapp:whatsapp --module=src/app.module.ts --mode=sandbox --add-health --add-micro --host=127.0.0.1 --port=4000`
 - Sandbox with explicit creds:
-  - `npx schematics @SoftZenIT/nest-whatsapp:whatsapp --module=src/app.module.ts --mode=sandbox --test-phone-number-id=123 --temporary-access-token=TOKEN --test-recipients=+15551234567,+15557654321`
+  - `npx schematics nest-whatsapp:whatsapp --module=src/app.module.ts --mode=sandbox --test-phone-number-id=123 --temporary-access-token=TOKEN --test-recipients=+15551234567,+15557654321`
 - Live configuration:
-  - `npx schematics @SoftZenIT/nest-whatsapp:whatsapp --module=src/app.module.ts --mode=live --business-account-id=BA_ID --phone-number-id=PN_ID --access-token=ACCESS_TOKEN`
+  - `npx schematics nest-whatsapp:whatsapp --module=src/app.module.ts --mode=live --business-account-id=BA_ID --phone-number-id=PN_ID --access-token=ACCESS_TOKEN`
 
 #### Notes
 
@@ -351,7 +351,7 @@ npx typedoc --out docs src
 - Option A (recommended): use the published package (no extra steps).
 - Option B (local development): build and install locally
   - `npm run build && npm pack` (note the generated `.tgz` file)
-  - In each example folder: `npm install ../../SoftZenIT-nest-whatsapp-*.tgz`
+  - In each example folder: `npm install ../../nest-whatsapp-*.tgz`
 
 ### Basic HTTP example
 

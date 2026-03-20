@@ -1,5 +1,5 @@
 {
-  "name": "@SoftZenIT/nest-whatsapp",
+  "name": "nest-whatsapp",
   "version": "0.0.1",
   "schematics": "./schematics/whatsapp/collection.json",
   "description": "NestJS module for WhatsApp Cloud API (CJS/ESM)",
@@ -139,10 +139,10 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/SoftZenIT/nest-whatsapp.git"
+    "url": "git+https://github.com/softzenit/nest-whatsapp.git"
   },
   "bugs": {
-    "url": "https://github.com/SoftZenIT/nest-whatsapp/issues"
+    "url": "https://github.com/softzenit/nest-whatsapp/issues"
   },
-  "homepage": "https://github.com/SoftZenIT/nest-whatsapp#readme"
+  "homepage": "https://github.com/softzenit/nest-whatsapp#readme"
 }

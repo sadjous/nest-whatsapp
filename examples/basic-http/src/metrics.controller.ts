@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { WhatsAppMetricsService } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppMetricsService } from 'nest-whatsapp';
 
 @Controller('metrics')
 export class MetricsController {

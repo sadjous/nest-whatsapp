@@ -1,7 +1,7 @@
-# @SoftZenIT/nest-whatsapp
+# nest-whatsapp
 
-[![npm version](https://img.shields.io/npm/v/@SoftZenIT/nest-whatsapp)](https://www.npmjs.com/package/@SoftZenIT/nest-whatsapp)
-[![Build Status](https://github.com/SoftZenIT/nest-whatsapp/actions/workflows/ci.yml/badge.svg)](https://github.com/SoftZenIT/nest-whatsapp/actions)
+[![npm version](https://img.shields.io/npm/v/nest-whatsapp)](https://www.npmjs.com/package/nest-whatsapp)
+[![Build Status](https://github.com/softzenit/nest-whatsapp/actions/workflows/ci.yml/badge.svg)](https://github.com/softzenit/nest-whatsapp/actions)
 [![Coverage Status](https://coveralls.io/repos/github/SoftZenIT/nest-whatsapp/badge.svg?branch=main)](https://coveralls.io/github/SoftZenIT/nest-whatsapp?branch=main)
 
 NestJS module for seamless integration with the WhatsApp Cloud API, supporting sandbox & live modes, multi-clients, webhooks, microservice transport, metrics, and health checks.
@@ -9,7 +9,7 @@ NestJS module for seamless integration with the WhatsApp Cloud API, supporting s
 ## Features
 
 - Send text, image, audio, document, location, and template messages
-- Session management helpers (`startSession`,\*\* \*\*`endSession`)
+- Session management helpers (`startSession`, `endSession`)
 - Sandbox mode for rapid testing
 - Live mode for production with template enforcement and rate limits
 - Webhook verification & event emitting
@@ -22,7 +22,7 @@ NestJS module for seamless integration with the WhatsApp Cloud API, supporting s
 ## Quickstart
 
 ```bash
-npm install @SoftZenIT/nest-whatsapp
+npm install nest-whatsapp
 ```
 
 ```ts
@@ -30,7 +30,7 @@ npm install @SoftZenIT/nest-whatsapp
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import whatsappConfig, { WhatsappConfigSchema } from './config/whatsapp.config';
-import { WhatsAppModule } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppModule } from 'nest-whatsapp';
 import { WhatsAppController } from './controllers/whatsapp.controller';
 
 @Module({
@@ -101,7 +101,7 @@ export class OrderService {
 
 ```ts
 import { Controller, Get, Post, Req, Headers } from '@nestjs/common';
-import { WhatsAppEvents } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppEvents } from 'nest-whatsapp';
 
 @Controller('whatsapp/webhook')
 export class WhatsAppController {

@@ -1,6 +1,6 @@
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
-import { WhatsAppHealthIndicator } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppHealthIndicator } from 'nest-whatsapp';
 
 @Controller('health')
 export class HealthController {

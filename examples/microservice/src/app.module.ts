@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { WhatsAppModule } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppModule } from 'nest-whatsapp';
 import { WaController } from './wa.controller';
 
 @Module({

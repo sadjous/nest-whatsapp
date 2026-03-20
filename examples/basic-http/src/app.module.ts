@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import whatsappConfig, { WhatsappConfigSchema } from './whatsapp.config';
-import { WhatsAppModule } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppModule } from 'nest-whatsapp';
 import { HealthController } from './health.controller';
 import { WaEventsLogger } from './wa-events.logger';
 import { WaMicroClientService } from './wa-micro-client.service';
@@ -9,7 +9,7 @@ import { TerminusModule } from '@nestjs/terminus';
 import { WhatsAppController } from './whatsapp.controller';
 import { MetricsController } from './metrics.controller';
 import { WaMicroController } from './wa-micro.controller';
-import { WhatsAppModule as WA } from '@SoftZenIT/nest-whatsapp';
+import { WhatsAppModule as WA } from 'nest-whatsapp';
 
 @Module({
   imports: [
