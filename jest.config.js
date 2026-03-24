@@ -3,6 +3,9 @@ module.exports = {
   roots: ['<rootDir>/src', '<rootDir>/examples', '<rootDir>/schematics'],
   testPathIgnorePatterns: ['/node_modules/', '<rootDir>/schematics/dist/'],
   coveragePathIgnorePatterns: ['/node_modules/', '<rootDir>/schematics/dist/'],
+  moduleNameMapper: {
+    '^ora$': '<rootDir>/__mocks__/ora.js',
+  },
   transform: {
     '^.+\\.(t|j)sx?$': [
       '@swc/jest',

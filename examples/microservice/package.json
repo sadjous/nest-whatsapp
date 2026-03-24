@@ -6,9 +6,9 @@
     "demo": "node -r ts-node/register -r tsconfig-paths/register src/demo-client.ts"
   },
   "dependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "^10.0.0",
-    "@nestjs/microservices": "^10.0.0",
+    "@nestjs/common": "^11.0.0",
+    "@nestjs/core": "^11.0.0",
+    "@nestjs/microservices": "^11.0.0",
     "@nestjs/config": "^3.0.0",
     "nest-whatsapp": "file:../../",
     "dotenv": "^17.3.1",
