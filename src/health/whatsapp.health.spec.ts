@@ -2,20 +2,21 @@ import { HttpService } from '@nestjs/axios';
 import { of, throwError } from 'rxjs';
 import { WhatsAppHealthIndicator } from './whatsapp.health';
 import { HealthCheckError } from '@nestjs/terminus';
-import type {
-  WhatsAppSandboxOptions,
-  WhatsAppLiveOptions,
+import {
+  WhatsAppMode,
+  type WhatsAppSandboxOptions,
+  type WhatsAppLiveOptions,
 } from '../interfaces/whatsapp-client-options.interface';
 
 const sandboxConfig: WhatsAppSandboxOptions = {
-  mode: 'sandbox',
+  mode: WhatsAppMode.SANDBOX,
   testPhoneNumberId: 'id',
   temporaryAccessToken: 'token',
   testRecipients: ['+100'],
 };
 
 const liveConfig: WhatsAppLiveOptions = {
-  mode: 'live',
+  mode: WhatsAppMode.LIVE,
   businessAccountId: 'biz',
   phoneNumberId: 'pn',
   accessToken: 'token',

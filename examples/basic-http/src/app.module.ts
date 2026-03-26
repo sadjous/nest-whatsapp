@@ -1,7 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import whatsappConfig, { WhatsappConfigSchema } from './whatsapp.config';
-import { WhatsAppModule, WhatsAppModule as WhatsAppMicroServiceModule } from 'nest-whatsapp';
+import {
+  WhatsAppModule,
+  WhatsAppMode,
+  WhatsAppModule as WhatsAppMicroServiceModule,
+} from 'nest-whatsapp';
 import { HealthController } from './health.controller';
 import { WaEventsLogger } from './wa-events.logger';
 import { WaMicroClientService } from './wa-micro-client.service';
@@ -23,10 +27,10 @@ import { WaMicroController } from './wa-micro.controller';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const mode = config.get<'sandbox' | 'live'>('WHATSAPP_MODE', { infer: true }) ?? 'live';
+        const mode = config.get<string>('WHATSAPP_MODE') ?? 'live';
         if (mode === 'sandbox') {
           return {
-            mode: 'sandbox' as const,
+            mode: WhatsAppMode.SANDBOX,
             testPhoneNumberId: config.getOrThrow<string>('WHATSAPP_SANDBOX_PHONE_NUMBER_ID'),
             temporaryAccessToken: config.getOrThrow<string>('WHATSAPP_SANDBOX_ACCESS_TOKEN'),
             testRecipients:
@@ -34,7 +38,7 @@ import { WaMicroController } from './wa-micro.controller';
           };
         }
         return {
-          mode: 'live' as const,
+          mode: WhatsAppMode.LIVE,
           businessAccountId: config.getOrThrow<string>('WHATSAPP_LIVE_BUSINESS_ACCOUNT_ID'),
           phoneNumberId: config.getOrThrow<string>('WHATSAPP_LIVE_PHONE_NUMBER_ID'),
           accessToken: config.getOrThrow<string>('WHATSAPP_LIVE_ACCESS_TOKEN'),

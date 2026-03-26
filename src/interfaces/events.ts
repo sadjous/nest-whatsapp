@@ -6,6 +6,7 @@ import type {
   WhatsAppMetadata,
   WhatsAppReferral,
 } from './webhook.interfaces';
+import { WhatsAppMessageType } from './webhook.interfaces';
 
 export const WHATSAPP_MESSAGE_RECEIVED = 'whatsapp.message_received' as const;
 export const WHATSAPP_STATUS_RECEIVED = 'whatsapp.status_received' as const;
@@ -51,20 +52,20 @@ export interface WhatsAppReferralEvent extends BaseMessageEvent {
 export type WhatsAppEventMap = {
   [WHATSAPP_MESSAGE_RECEIVED]: WhatsAppMessageReceivedEvent;
   [WHATSAPP_STATUS_RECEIVED]: WhatsAppStatusEvent;
-  [WHATSAPP_TEXT_RECEIVED]: WhatsAppTypedMessageEvent<'text'>;
-  [WHATSAPP_IMAGE_RECEIVED]: WhatsAppTypedMessageEvent<'image'>;
-  [WHATSAPP_AUDIO_RECEIVED]: WhatsAppTypedMessageEvent<'audio'>;
-  [WHATSAPP_DOCUMENT_RECEIVED]: WhatsAppTypedMessageEvent<'document'>;
-  [WHATSAPP_LOCATION_RECEIVED]: WhatsAppTypedMessageEvent<'location'>;
-  [WHATSAPP_TEMPLATE_RECEIVED]: WhatsAppTypedMessageEvent<'template'>;
-  [WHATSAPP_INTERACTIVE_RECEIVED]: WhatsAppTypedMessageEvent<'interactive'>;
-  [WHATSAPP_CONTACTS_RECEIVED]: WhatsAppTypedMessageEvent<'contacts'>;
-  [WHATSAPP_SYSTEM_RECEIVED]: WhatsAppTypedMessageEvent<'system'>;
-  [WHATSAPP_ORDER_RECEIVED]: WhatsAppTypedMessageEvent<'order'>;
-  [WHATSAPP_PRODUCT_RECEIVED]: WhatsAppTypedMessageEvent<'product'>;
-  [WHATSAPP_REACTION_RECEIVED]: WhatsAppTypedMessageEvent<'reaction'>;
-  [WHATSAPP_VIDEO_RECEIVED]: WhatsAppTypedMessageEvent<'video'>;
-  [WHATSAPP_STICKER_RECEIVED]: WhatsAppTypedMessageEvent<'sticker'>;
+  [WHATSAPP_TEXT_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.TEXT>;
+  [WHATSAPP_IMAGE_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.IMAGE>;
+  [WHATSAPP_AUDIO_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.AUDIO>;
+  [WHATSAPP_DOCUMENT_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.DOCUMENT>;
+  [WHATSAPP_LOCATION_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.LOCATION>;
+  [WHATSAPP_TEMPLATE_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.TEMPLATE>;
+  [WHATSAPP_INTERACTIVE_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.INTERACTIVE>;
+  [WHATSAPP_CONTACTS_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.CONTACTS>;
+  [WHATSAPP_SYSTEM_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.SYSTEM>;
+  [WHATSAPP_ORDER_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.ORDER>;
+  [WHATSAPP_PRODUCT_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.PRODUCT>;
+  [WHATSAPP_REACTION_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.REACTION>;
+  [WHATSAPP_VIDEO_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.VIDEO>;
+  [WHATSAPP_STICKER_RECEIVED]: WhatsAppTypedMessageEvent<WhatsAppMessageType.STICKER>;
   [WHATSAPP_REFERRAL_RECEIVED]: WhatsAppReferralEvent;
 };
 

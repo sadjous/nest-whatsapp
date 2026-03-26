@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { WhatsAppModule } from 'nest-whatsapp';
+import { WhatsAppModule, WhatsAppMode } from 'nest-whatsapp';
 import { WaController } from './wa.controller';
 
 @Module({
@@ -16,17 +16,17 @@ import { WaController } from './wa.controller';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const mode = config.get<'sandbox' | 'live'>('WHATSAPP_MODE', { infer: true }) ?? 'live';
+        const mode = config.get<string>('WHATSAPP_MODE') ?? 'live';
         return mode === 'sandbox'
           ? {
-              mode: 'sandbox' as const,
+              mode: WhatsAppMode.SANDBOX,
               testPhoneNumberId: config.getOrThrow<string>('WHATSAPP_SANDBOX_PHONE_NUMBER_ID'),
               temporaryAccessToken: config.getOrThrow<string>('WHATSAPP_SANDBOX_ACCESS_TOKEN'),
               testRecipients:
                 config.get<string>('WHATSAPP_SANDBOX_TEST_RECIPIENTS')?.split(',') ?? [],
             }
           : {
-              mode: 'live' as const,
+              mode: WhatsAppMode.LIVE,
               businessAccountId: config.getOrThrow<string>('WHATSAPP_LIVE_BUSINESS_ACCOUNT_ID'),
               phoneNumberId: config.getOrThrow<string>('WHATSAPP_LIVE_PHONE_NUMBER_ID'),
               accessToken: config.getOrThrow<string>('WHATSAPP_LIVE_ACCESS_TOKEN'),
