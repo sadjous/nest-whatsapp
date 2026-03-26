@@ -26,7 +26,7 @@ coverage/
 .DS_Store
 .vscode/
 .husky/
-docs/
+docs/*
 !docs/guides/
 schematics/dist/
 *.tgz
