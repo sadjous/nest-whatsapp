@@ -1,11 +1,14 @@
 import { Test } from '@nestjs/testing';
 import { WhatsAppModule } from './whatsapp.module';
-import { WhatsAppClientOptions } from './interfaces/whatsapp-client-options.interface';
+import {
+  WhatsAppMode,
+  WhatsAppClientOptions,
+} from './interfaces/whatsapp-client-options.interface';
 
 describe('WhatsAppModule.forRoot', () => {
   it('binds synchronous config to the correct client token', async () => {
     const config: WhatsAppClientOptions = {
-      mode: 'sandbox',
+      mode: WhatsAppMode.SANDBOX,
       testPhoneNumberId: 'pn-sync',
       temporaryAccessToken: 'tok-sync',
       testRecipients: ['+10000000001'],
@@ -25,7 +28,7 @@ describe('WhatsAppModule.forRoot', () => {
 describe('WhatsAppModule.forRootAsync', () => {
   it('binds async factory output to sandbox token', async () => {
     const sandboxConfig: WhatsAppClientOptions = {
-      mode: 'sandbox',
+      mode: WhatsAppMode.SANDBOX,
       testPhoneNumberId: 'pn',
       temporaryAccessToken: 'token',
       testRecipients: ['+10000000000'],
@@ -48,13 +51,13 @@ describe('WhatsAppModule.forRootAsync', () => {
   it('supports registering multiple clients from async factory', async () => {
     const configs: WhatsAppClientOptions[] = [
       {
-        mode: 'sandbox',
+        mode: WhatsAppMode.SANDBOX,
         testPhoneNumberId: 'pn-multi',
         temporaryAccessToken: 'token-multi',
         testRecipients: [],
       },
       {
-        mode: 'live',
+        mode: WhatsAppMode.LIVE,
         businessAccountId: 'biz',
         phoneNumberId: 'live-pn',
         accessToken: 'live-token',

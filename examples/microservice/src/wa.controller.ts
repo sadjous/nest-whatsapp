@@ -1,7 +1,6 @@
 import { Controller } from '@nestjs/common';
 import { MessagePattern, Payload } from '@nestjs/microservices';
-import { WhatsAppService } from 'nest-whatsapp';
-import type { WhatsAppMode } from '../../../src/interfaces/whatsapp-client-options.interface';
+import { WhatsAppService, WhatsAppMode } from 'nest-whatsapp';
 import {
   MarkAsReadDto,
   SendContactDto,
@@ -19,7 +18,8 @@ export class WaController {
   @MessagePattern('wa.sendText')
   async sendText(@Payload() data: SendTextDto) {
     const mode: WhatsAppMode =
-      data.mode ?? (process.env.WHATSAPP_MODE === 'sandbox' ? 'sandbox' : 'live');
+      data.mode ??
+      (process.env.WHATSAPP_MODE === 'sandbox' ? WhatsAppMode.SANDBOX : WhatsAppMode.LIVE);
     await this.wa.sendText(data.to, data.message, mode);
     return { ok: true };
   }
@@ -27,7 +27,8 @@ export class WaController {
   @MessagePattern('wa.sendTemplate')
   async sendTemplate(@Payload() data: SendTemplateDto) {
     const mode: WhatsAppMode =
-      data.mode ?? (process.env.WHATSAPP_MODE === 'sandbox' ? 'sandbox' : 'live');
+      data.mode ??
+      (process.env.WHATSAPP_MODE === 'sandbox' ? WhatsAppMode.SANDBOX : WhatsAppMode.LIVE);
     await this.wa.sendTemplate(data.to, data.templateName, data.variables ?? [], mode);
     return { ok: true };
   }
@@ -35,7 +36,8 @@ export class WaController {
   @MessagePattern('wa.sendMedia')
   async sendMedia(@Payload() data: SendMediaDto) {
     const mode: WhatsAppMode =
-      data.mode ?? (process.env.WHATSAPP_MODE === 'sandbox' ? 'sandbox' : 'live');
+      data.mode ??
+      (process.env.WHATSAPP_MODE === 'sandbox' ? WhatsAppMode.SANDBOX : WhatsAppMode.LIVE);
     await this.wa.sendMedia(data.to, data.mediaUrl, data.caption ?? '', mode);
     return { ok: true };
   }
@@ -43,7 +45,8 @@ export class WaController {
   @MessagePattern('wa.sendDocument')
   async sendDocument(@Payload() data: SendDocumentDto) {
     const mode: WhatsAppMode =
-      data.mode ?? (process.env.WHATSAPP_MODE === 'sandbox' ? 'sandbox' : 'live');
+      data.mode ??
+      (process.env.WHATSAPP_MODE === 'sandbox' ? WhatsAppMode.SANDBOX : WhatsAppMode.LIVE);
     await this.wa.sendDocument(data.to, data.documentUrl, data.filename, mode);
     return { ok: true };
   }
@@ -51,7 +54,8 @@ export class WaController {
   @MessagePattern('wa.sendLocation')
   async sendLocation(@Payload() data: SendLocationDto) {
     const mode: WhatsAppMode =
-      data.mode ?? (process.env.WHATSAPP_MODE === 'sandbox' ? 'sandbox' : 'live');
+      data.mode ??
+      (process.env.WHATSAPP_MODE === 'sandbox' ? WhatsAppMode.SANDBOX : WhatsAppMode.LIVE);
     await this.wa.sendLocation(
       data.to,
       data.latitude,
@@ -66,7 +70,8 @@ export class WaController {
   @MessagePattern('wa.sendContact')
   async sendContact(@Payload() data: SendContactDto) {
     const mode: WhatsAppMode =
-      data.mode ?? (process.env.WHATSAPP_MODE === 'sandbox' ? 'sandbox' : 'live');
+      data.mode ??
+      (process.env.WHATSAPP_MODE === 'sandbox' ? WhatsAppMode.SANDBOX : WhatsAppMode.LIVE);
     await this.wa.sendContact(data.to, data.contacts, mode);
     return { ok: true };
   }
@@ -74,7 +79,8 @@ export class WaController {
   @MessagePattern('wa.markAsRead')
   async markAsRead(@Payload() data: MarkAsReadDto) {
     const mode: WhatsAppMode =
-      data.mode ?? (process.env.WHATSAPP_MODE === 'sandbox' ? 'sandbox' : 'live');
+      data.mode ??
+      (process.env.WHATSAPP_MODE === 'sandbox' ? WhatsAppMode.SANDBOX : WhatsAppMode.LIVE);
     await this.wa.markAsRead(data.messageId, mode);
     return { ok: true };
   }

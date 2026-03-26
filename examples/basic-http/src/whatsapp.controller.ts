@@ -1,6 +1,5 @@
 import { Controller, Post, Body, HttpCode } from '@nestjs/common';
-import { WhatsAppService } from 'nest-whatsapp';
-import type { WhatsAppMode } from '../../../src/interfaces/whatsapp-client-options.interface';
+import { WhatsAppService, WhatsAppMode } from 'nest-whatsapp';
 import type { WhatsAppContactCard } from '../../../src/interfaces/webhook.interfaces';
 
 @Controller('messages')
@@ -8,7 +7,7 @@ export class WhatsAppController {
   constructor(private readonly wa: WhatsAppService) {}
 
   private get mode(): WhatsAppMode {
-    return process.env.WHATSAPP_MODE === 'sandbox' ? 'sandbox' : 'live';
+    return process.env.WHATSAPP_MODE === 'sandbox' ? WhatsAppMode.SANDBOX : WhatsAppMode.LIVE;
   }
 
   @Post('text')
