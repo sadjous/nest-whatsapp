@@ -35,6 +35,7 @@ export function whatsapp(options: Options): Rule {
       if (change) importChanges.push(change);
     };
     maybeImport('WhatsAppModule', 'nest-whatsapp');
+    maybeImport('WhatsAppMode', 'nest-whatsapp');
     maybeImport('ConfigModule', '@nestjs/config');
     maybeImport('ConfigService', '@nestjs/config');
 
@@ -55,7 +56,7 @@ export function whatsapp(options: Options): Rule {
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: (config: ConfigService) => ({
-    mode: 'sandbox',
+    mode: WhatsAppMode.SANDBOX,
     testPhoneNumberId: config.get<string>('WHATSAPP_SANDBOX_PHONE_NUMBER_ID') ?? '${
       options.testPhoneNumberId ?? '<phone_number_id>'
     }',
@@ -70,7 +71,7 @@ export function whatsapp(options: Options): Rule {
   imports: [ConfigModule],
   inject: [ConfigService],
   useFactory: (config: ConfigService) => ({
-    mode: 'live',
+    mode: WhatsAppMode.LIVE,
     businessAccountId: config.get<string>('WHATSAPP_LIVE_BUSINESS_ACCOUNT_ID') ?? '${
       options.businessAccountId ?? '<business_account_id>'
     }',

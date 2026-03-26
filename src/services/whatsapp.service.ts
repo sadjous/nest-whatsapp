@@ -390,8 +390,8 @@ export class WhatsAppService implements OnModuleInit {
     templateName: string,
     variables: string[],
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
-    languageCode: string = 'en_US',
-    replyToMessageId?: string
+    replyToMessageId?: string,
+    languageCode: string = 'en_US'
   ): Promise<string> {
     const config = this.getConfig(clientName);
     const url = this.getEndpoint(config);
