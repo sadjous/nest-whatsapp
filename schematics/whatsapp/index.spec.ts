@@ -25,12 +25,14 @@ describe('whatsapp schematic', () => {
     });
     const tree = rule(createAppModule(), {} as any) as UnitTestTree;
     const content = tree.readContent('src/app.module.ts');
-    expect(content).toContain("import { WhatsAppModule } from 'nest-whatsapp'");
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppModule[^}]*\}\s+from\s+'nest-whatsapp'/);
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppMode[^}]*\}\s+from\s+'nest-whatsapp'/);
     expect(content).toContain("import { ConfigModule } from '@nestjs/config'");
     expect(content).toContain("import { ConfigService } from '@nestjs/config'");
     expect(content).toContain('WhatsAppModule.forHealth()');
     expect(content).toContain("WhatsAppModule.forMicroservice({ host: '127.0.0.1', port: 4000 })");
     expect(content).toContain('WhatsAppModule.forRootAsync');
+    expect(content).toContain('WhatsAppMode.SANDBOX');
   });
 
   it('inserts live forRootAsync', () => {
@@ -47,8 +49,10 @@ describe('whatsapp schematic', () => {
     });
     const tree = rule(createAppModule(), {} as any) as UnitTestTree;
     const content = tree.readContent('src/app.module.ts');
-    expect(content).toContain("import { WhatsAppModule } from 'nest-whatsapp'");
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppModule[^}]*\}\s+from\s+'nest-whatsapp'/);
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppMode[^}]*\}\s+from\s+'nest-whatsapp'/);
     expect(content).toContain('WhatsAppModule.forRootAsync');
+    expect(content).toContain('WhatsAppMode.LIVE');
     expect(content).toContain(
       "businessAccountId: config.get<string>('WHATSAPP_LIVE_BUSINESS_ACCOUNT_ID') ?? 'b'"
     );
@@ -78,9 +82,12 @@ describe('whatsapp schematic', () => {
     });
     const updatedTree = rule(tree, {} as any) as UnitTestTree;
     const content = updatedTree.readContent('src/app.module.ts');
-    // Import present exactly once
-    const occurrences = (content.match(/import\s+\{\s*WhatsAppModule\s*\}/g) || []).length;
-    expect(occurrences).toBe(1);
+    // Both symbols imported from nest-whatsapp exactly once
+    const nestImportCount = (content.match(/from\s+'nest-whatsapp'/g) || []).length;
+    expect(nestImportCount).toBe(1);
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppModule[^}]*\}\s+from\s+'nest-whatsapp'/);
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppMode[^}]*\}\s+from\s+'nest-whatsapp'/);
+    expect(content).toContain('WhatsAppMode.SANDBOX');
     // Recipients rendered as array of strings
     expect(content).toContain(
       "testRecipients: config.get<string>('WHATSAPP_SANDBOX_TEST_RECIPIENTS')?.split(',') ?? ['+111', '+222']"

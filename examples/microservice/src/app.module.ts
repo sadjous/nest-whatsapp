@@ -16,8 +16,8 @@ import { WaController } from './wa.controller';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const mode = config.get<string>('WHATSAPP_MODE') ?? 'live';
-        return mode === 'sandbox'
+        const mode = config.get<string>('WHATSAPP_MODE') ?? WhatsAppMode.LIVE;
+        return mode === WhatsAppMode.SANDBOX
           ? {
               mode: WhatsAppMode.SANDBOX,
               testPhoneNumberId: config.getOrThrow<string>('WHATSAPP_SANDBOX_PHONE_NUMBER_ID'),

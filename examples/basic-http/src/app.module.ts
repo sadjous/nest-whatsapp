@@ -27,8 +27,8 @@ import { WaMicroController } from './wa-micro.controller';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
-        const mode = config.get<string>('WHATSAPP_MODE') ?? 'live';
-        if (mode === 'sandbox') {
+        const mode = config.get<string>('WHATSAPP_MODE') ?? WhatsAppMode.LIVE;
+        if (mode === WhatsAppMode.SANDBOX) {
           return {
             mode: WhatsAppMode.SANDBOX,
             testPhoneNumberId: config.getOrThrow<string>('WHATSAPP_SANDBOX_PHONE_NUMBER_ID'),
