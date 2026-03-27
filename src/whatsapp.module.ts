@@ -9,11 +9,10 @@ import {
 import { HttpModule } from '@nestjs/axios';
 import { WhatsAppService } from './services/whatsapp.service';
 import {
-  WhatsAppClientOptions,
+  type WhatsAppClientOptions,
   WhatsAppMode,
 } from './interfaces/whatsapp-client-options.interface';
-import { WhatsAppMetricsService } from './services/whatsapp.metrics';
-import { WhatsAppMicroserviceOptions } from './interfaces/whatsapp-microservice-options.interface';
+import type { WhatsAppMicroserviceOptions } from './interfaces/whatsapp-microservice-options.interface';
 import {
   WhatsAppEvents,
   WHATSAPP_EVENT_EMITTER,
@@ -124,7 +123,6 @@ export class WhatsAppModule {
         runtimeOptionsProvider,
         ...providers,
         WhatsAppService,
-        WhatsAppMetricsService,
         WhatsAppEvents,
         WhatsAppWebhookProcessor,
         WhatsAppMediaService,
@@ -133,7 +131,6 @@ export class WhatsAppModule {
       ],
       exports: [
         WhatsAppService,
-        WhatsAppMetricsService,
         WhatsAppEvents,
         WhatsAppMediaService,
         WhatsAppTemplatesService,
@@ -178,7 +175,6 @@ export class WhatsAppModule {
         asyncClientsProvider,
         ...clientProviders,
         WhatsAppService,
-        WhatsAppMetricsService,
         WhatsAppEvents,
         WhatsAppWebhookProcessor,
         WhatsAppMediaService,
@@ -187,7 +183,6 @@ export class WhatsAppModule {
       ],
       exports: [
         WhatsAppService,
-        WhatsAppMetricsService,
         WhatsAppEvents,
         WhatsAppMediaService,
         WhatsAppTemplatesService,
@@ -226,7 +221,6 @@ export class WhatsAppModule {
         eventEmitterProvider,
         runtimeOptionsProvider,
         WhatsAppService,
-        WhatsAppMetricsService,
         WhatsAppEvents,
         WhatsAppWebhookProcessor,
         WhatsAppMediaService,
@@ -235,34 +229,11 @@ export class WhatsAppModule {
       ],
       exports: [
         WhatsAppService,
-        WhatsAppMetricsService,
         WhatsAppEvents,
         WhatsAppMediaService,
         WhatsAppTemplatesService,
         WhatsAppPhoneNumbersService,
         ClientsModule,
-      ],
-    };
-  }
-
-  // Optional: expose health indicator support only when requested
-  static forHealth(): DynamicModule {
-    // Lazy import only the health indicator; app should import TerminusModule itself
-    const { WhatsAppHealthIndicator } = require('./health/whatsapp.health');
-    return {
-      module: WhatsAppModule,
-      imports: [createHttpModule()],
-      providers: [
-        WhatsAppHealthIndicator,
-        WhatsAppMediaService,
-        WhatsAppTemplatesService,
-        WhatsAppPhoneNumbersService,
-      ],
-      exports: [
-        WhatsAppHealthIndicator,
-        WhatsAppMediaService,
-        WhatsAppTemplatesService,
-        WhatsAppPhoneNumbersService,
       ],
     };
   }

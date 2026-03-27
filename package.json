@@ -3,14 +3,13 @@
   "version": "0.0.1",
   "schematics": "./schematics/whatsapp/collection.json",
   "description": "NestJS module for WhatsApp Cloud API (CJS/ESM)",
-  "main": "dist/cjs/index.js",
-  "module": "dist/esm/index.js",
-  "types": "dist/esm/index.d.ts",
+  "main": "dist/index.cjs",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
   "scripts": {
-    "build:cjs": "tsc --build tsconfig.cjs.json",
-    "build:esm": "tsc --build tsconfig.esm.json",
+    "build:lib": "tsup",
     "build:schematics": "tsc -p tsconfig.schematics.json",
-    "build": "npm run build:cjs && npm run build:esm && npm run build:schematics",
+    "build": "npm run build:lib && npm run build:schematics",
     "release": "semantic-release",
     "lint": "eslint 'src/**/*.ts' 'examples/**/*.ts' --fix",
     "format": "prettier --write '{src,examples}/**/*.{ts,js,json,md}'",
@@ -32,16 +31,25 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/esm/index.d.ts",
-      "import": "./dist/esm/index.js",
-      "require": "./dist/cjs/index.js"
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./metrics": {
+      "types": "./dist/metrics.d.ts",
+      "import": "./dist/metrics.mjs",
+      "require": "./dist/metrics.js"
+    },
+    "./health": {
+      "types": "./dist/health.d.ts",
+      "import": "./dist/health.mjs",
+      "require": "./dist/health.js"
     },
     "./package.json": "./package.json"
   },
   "dependencies": {
     "axios": "^1.13.6",
     "joi": "^17.13.3",
-    "prom-client": "^14.2.0",
     "reflect-metadata": "^0.2.2"
   },
   "simple-git-hooks": {
@@ -91,6 +99,7 @@
     "prettier": "^3.8.1",
     "semantic-release": "^24.0.0",
     "simple-git-hooks": "^2.13.1",
+    "tsup": "^8.5.1",
     "typedoc": "^0.28.0",
     "typescript": "^5.8.3"
   },
@@ -104,7 +113,8 @@
     "@nestjs/core": "^10 || ^11",
     "@nestjs/event-emitter": "^2 || ^3",
     "@nestjs/microservices": "^10 || ^11",
-    "@nestjs/terminus": "^11"
+    "@nestjs/terminus": "^11",
+    "prom-client": "^14 || ^15"
   },
   "peerDependenciesMeta": {
     "@nestjs/terminus": {
@@ -118,16 +128,19 @@
     },
     "@nestjs/event-emitter": {
       "optional": true
+    },
+    "prom-client": {
+      "optional": true
     }
   },
   "overrides": {
     "js-yaml": "^4.1.1"
   },
   "files": [
-    "dist/cjs/**/*.js",
-    "dist/esm/**/*.js",
-    "dist/esm/**/*.d.ts",
-    "schematics/dist/**",
+    "dist/*.js",
+    "dist/*.mjs",
+    "dist/*.d.ts",
+    "schematics/dist/whatsapp/index.js",
     "schematics/whatsapp/collection.json",
     "schematics/whatsapp/schema.json",
     "schematics/whatsapp/files/",

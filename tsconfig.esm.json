@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.build.json",
-  "compilerOptions": {
-    "outDir": "dist/esm",
-    "module": "es2022",
-    "tsBuildInfoFile": ".build-cache/tsconfig.esm.tsbuildinfo"
-  }
-}

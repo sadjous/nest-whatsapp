@@ -3,10 +3,10 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import type { AxiosRequestConfig } from 'axios';
 import {
-  WhatsAppClientOptions,
+  type WhatsAppClientOptions,
   WhatsAppMode,
-  WhatsAppSandboxOptions,
-  WhatsAppLiveOptions,
+  type WhatsAppSandboxOptions,
+  type WhatsAppLiveOptions,
 } from '../interfaces/whatsapp-client-options.interface';
 import {
   WHATSAPP_RUNTIME_OPTIONS,

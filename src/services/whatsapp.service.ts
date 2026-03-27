@@ -3,9 +3,9 @@ import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import type { AxiosRequestConfig } from 'axios';
 import {
-  WhatsAppClientOptions,
-  WhatsAppSandboxOptions,
-  WhatsAppLiveOptions,
+  type WhatsAppClientOptions,
+  type WhatsAppSandboxOptions,
+  type WhatsAppLiveOptions,
   WhatsAppMode,
 } from '../interfaces/whatsapp-client-options.interface';
 import { WhatsAppMetricsService } from './whatsapp.metrics';
