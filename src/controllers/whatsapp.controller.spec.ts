@@ -10,14 +10,17 @@ import type {
   WhatsAppWebhookPayload,
 } from '../interfaces/webhook.interfaces';
 import type { Request } from 'express';
-import { WhatsAppMetricsService } from '../services/whatsapp.metrics';
+import {
+  WHATSAPP_METRICS_SERVICE,
+  type IWhatsAppMetrics,
+} from '../interfaces/whatsapp-metrics.interface';
 import { unsafeCast } from '../test-utils/type-helpers';
 
 describe('WhatsAppController', () => {
   let controller: WhatsAppController;
   let eventEmitter: EventEmitter2;
   let configService: ConfigService;
-  let metrics: WhatsAppMetricsService;
+  let metrics: IWhatsAppMetrics;
   let configValues: Record<string, unknown>;
 
   beforeEach(async () => {
@@ -26,14 +29,14 @@ describe('WhatsAppController', () => {
     configService = unsafeCast<ConfigService>({
       get: jest.fn((key: string) => configValues[key]),
     });
-    metrics = { incrementWebhookEvents: jest.fn() } as unknown as WhatsAppMetricsService;
+    metrics = { incrementWebhookEvents: jest.fn() } as unknown as IWhatsAppMetrics;
     const module: TestingModule = await Test.createTestingModule({
       controllers: [WhatsAppController],
       providers: [
         { provide: WHATSAPP_EVENT_EMITTER, useValue: eventEmitter },
         WhatsAppEvents,
         { provide: ConfigService, useValue: configService },
-        { provide: WhatsAppMetricsService, useValue: metrics },
+        { provide: WHATSAPP_METRICS_SERVICE, useValue: metrics },
       ],
     }).compile();
     controller = module.get<WhatsAppController>(WhatsAppController);
@@ -124,7 +127,7 @@ describe('WhatsAppController', () => {
         { provide: WHATSAPP_EVENT_EMITTER, useValue: new EventEmitter2() },
         WhatsAppEvents,
         // No ConfigService — controller falls back to process.env
-        { provide: WhatsAppMetricsService, useValue: metrics },
+        { provide: WHATSAPP_METRICS_SERVICE, useValue: metrics },
       ],
     }).compile();
     const noConfigController = module.get<WhatsAppController>(WhatsAppController);

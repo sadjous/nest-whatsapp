@@ -2,7 +2,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { HttpService } from '@nestjs/axios';
 import { of, throwError } from 'rxjs';
 import { WhatsAppService } from './whatsapp.service';
-import { WhatsAppMetricsService } from './whatsapp.metrics';
+import { WHATSAPP_METRICS_SERVICE } from '../interfaces/whatsapp-metrics.interface';
+import type { IWhatsAppMetrics } from '../interfaces/whatsapp-metrics.interface';
 import type { WhatsAppLiveOptions } from '../interfaces/whatsapp-client-options.interface';
 
 describe('WhatsAppService metrics', () => {
@@ -20,7 +21,7 @@ describe('WhatsAppService metrics', () => {
     incrementErrors: jest.fn(),
     incrementWebhookEvents: jest.fn(),
     startRequestTimer: jest.fn(),
-  } as unknown as WhatsAppMetricsService;
+  } as unknown as IWhatsAppMetrics;
 
   beforeEach(async () => {
     jest.resetModules();
@@ -31,7 +32,7 @@ describe('WhatsAppService metrics', () => {
         WhatsAppService,
         { provide: 'WHATSAPP_CLIENT_LIVE', useValue: liveConfig },
         { provide: HttpService, useValue: { post: jest.fn() } },
-        { provide: WhatsAppMetricsService, useValue: metrics },
+        { provide: WHATSAPP_METRICS_SERVICE, useValue: metrics },
       ],
     }).compile();
     service = module.get(WhatsAppService);

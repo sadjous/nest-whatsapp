@@ -11,12 +11,6 @@ export default defineConfig({
   clean: true,
   sourcemap: false,
   treeshake: true,
-  esbuildOptions(options) {
-    // TypeScript interfaces have no runtime value; esbuild reports "missing-export"
-    // for any `import { InterfaceName }` without `import type`. Silence the
-    // diagnostic — the TS loader still strips them correctly from JS output.
-    options.logOverride = { 'missing-export': 'silent' };
-  },
   external: [
     '@nestjs/common',
     '@nestjs/core',

@@ -3,7 +3,7 @@
   "version": "0.0.1",
   "schematics": "./schematics/whatsapp/collection.json",
   "description": "NestJS module for WhatsApp Cloud API (CJS/ESM)",
-  "main": "dist/index.cjs",
+  "main": "dist/index.js",
   "module": "dist/index.mjs",
   "types": "dist/index.d.ts",
   "scripts": {
@@ -31,19 +31,34 @@
   "sideEffects": false,
   "exports": {
     ".": {
-      "types": "./dist/index.d.ts",
-      "import": "./dist/index.mjs",
-      "require": "./dist/index.js"
+      "import": {
+        "types": "./dist/index.d.mts",
+        "default": "./dist/index.mjs"
+      },
+      "require": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
     },
     "./metrics": {
-      "types": "./dist/metrics.d.ts",
-      "import": "./dist/metrics.mjs",
-      "require": "./dist/metrics.js"
+      "import": {
+        "types": "./dist/metrics.d.mts",
+        "default": "./dist/metrics.mjs"
+      },
+      "require": {
+        "types": "./dist/metrics.d.ts",
+        "default": "./dist/metrics.js"
+      }
     },
     "./health": {
-      "types": "./dist/health.d.ts",
-      "import": "./dist/health.mjs",
-      "require": "./dist/health.js"
+      "import": {
+        "types": "./dist/health.d.mts",
+        "default": "./dist/health.mjs"
+      },
+      "require": {
+        "types": "./dist/health.d.ts",
+        "default": "./dist/health.js"
+      }
     },
     "./package.json": "./package.json"
   },
@@ -140,6 +155,7 @@
     "dist/*.js",
     "dist/*.mjs",
     "dist/*.d.ts",
+    "dist/*.d.mts",
     "schematics/dist/whatsapp/index.js",
     "schematics/whatsapp/collection.json",
     "schematics/whatsapp/schema.json",
