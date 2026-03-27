@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { WaMicroClientService } from './wa-micro-client.service';
-import type { WhatsAppMode } from '../../../src/interfaces/whatsapp-client-options.interface';
+import type { WhatsAppMode } from '@softzenit/nest-whatsapp';
 
 @Controller('micro')
 export class WaMicroController {

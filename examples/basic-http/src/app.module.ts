@@ -5,7 +5,9 @@ import {
   WhatsAppModule,
   WhatsAppMode,
   WhatsAppModule as WhatsAppMicroServiceModule,
-} from 'nest-whatsapp';
+} from '@softzenit/nest-whatsapp';
+import { WhatsAppHealthModule } from '@softzenit/nest-whatsapp/health';
+import { WhatsAppMetricsModule } from '@softzenit/nest-whatsapp/metrics';
 import { HealthController } from './health.controller';
 import { WaEventsLogger } from './wa-events.logger';
 import { WaMicroClientService } from './wa-micro-client.service';
@@ -22,7 +24,8 @@ import { WaMicroController } from './wa-micro.controller';
       validationSchema: WhatsappConfigSchema,
     }),
     TerminusModule,
-    WhatsAppModule.forHealth(),
+    WhatsAppHealthModule,
+    WhatsAppMetricsModule,
     WhatsAppModule.forRootAsync({
       imports: [ConfigModule],
       inject: [ConfigService],

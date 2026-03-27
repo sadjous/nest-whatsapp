@@ -1,6 +1,6 @@
 import { Controller, Post, Body, HttpCode } from '@nestjs/common';
-import { WhatsAppService, WhatsAppMode } from 'nest-whatsapp';
-import type { WhatsAppContactCard } from '../../../src/interfaces/webhook.interfaces';
+import { WhatsAppService, WhatsAppMode } from '@softzenit/nest-whatsapp';
+import type { WhatsAppContactCard } from '@softzenit/nest-whatsapp';
 
 @Controller('messages')
 export class WhatsAppController {
