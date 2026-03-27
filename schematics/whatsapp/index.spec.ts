@@ -25,17 +25,11 @@ describe('whatsapp schematic', () => {
     });
     const tree = rule(createAppModule(), {} as any) as UnitTestTree;
     const content = tree.readContent('src/app.module.ts');
-    expect(content).toMatch(
-      /import\s+\{[^}]*WhatsAppModule[^}]*\}\s+from\s+'@softzenit\/nest-whatsapp'/
-    );
-    expect(content).toMatch(
-      /import\s+\{[^}]*WhatsAppMode[^}]*\}\s+from\s+'@softzenit\/nest-whatsapp'/
-    );
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppModule[^}]*\}\s+from\s+'nest-whatsapp'/);
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppMode[^}]*\}\s+from\s+'nest-whatsapp'/);
     expect(content).toContain("import { ConfigModule } from '@nestjs/config'");
     expect(content).toContain("import { ConfigService } from '@nestjs/config'");
-    expect(content).toContain(
-      "import { WhatsAppHealthModule } from '@softzenit/nest-whatsapp/health'"
-    );
+    expect(content).toContain("import { WhatsAppHealthModule } from 'nest-whatsapp/health'");
     expect(content).toContain('WhatsAppHealthModule');
     expect(content).toContain("WhatsAppModule.forMicroservice({ host: '127.0.0.1', port: 4000 })");
     expect(content).toContain('WhatsAppModule.forRootAsync');
@@ -56,12 +50,8 @@ describe('whatsapp schematic', () => {
     });
     const tree = rule(createAppModule(), {} as any) as UnitTestTree;
     const content = tree.readContent('src/app.module.ts');
-    expect(content).toMatch(
-      /import\s+\{[^}]*WhatsAppModule[^}]*\}\s+from\s+'@softzenit\/nest-whatsapp'/
-    );
-    expect(content).toMatch(
-      /import\s+\{[^}]*WhatsAppMode[^}]*\}\s+from\s+'@softzenit\/nest-whatsapp'/
-    );
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppModule[^}]*\}\s+from\s+'nest-whatsapp'/);
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppMode[^}]*\}\s+from\s+'nest-whatsapp'/);
     expect(content).toContain('WhatsAppModule.forRootAsync');
     expect(content).toContain('WhatsAppMode.LIVE');
     expect(content).toContain(
@@ -75,7 +65,7 @@ describe('whatsapp schematic', () => {
     tree.overwrite(
       'src/app.module.ts',
       `import { Module } from '@nestjs/common';
-       import { WhatsAppModule } from '@softzenit/nest-whatsapp';
+       import { WhatsAppModule } from 'nest-whatsapp';
        @Module({ imports: [], controllers: [], providers: [] })
        export class AppModule {}`
     );
@@ -93,12 +83,9 @@ describe('whatsapp schematic', () => {
     const updatedTree = rule(tree, {} as any) as UnitTestTree;
     const content = updatedTree.readContent('src/app.module.ts');
     // WhatsAppModule import should not be duplicated
-    const whatsappPkgImportCount = (content.match(/from\s+'@softzenit\/nest-whatsapp'/g) || [])
-      .length;
+    const whatsappPkgImportCount = (content.match(/from\s+'nest-whatsapp'/g) || []).length;
     expect(whatsappPkgImportCount).toBe(1);
-    expect(content).toMatch(
-      /import\s+\{[^}]*WhatsAppModule[^}]*\}\s+from\s+'@softzenit\/nest-whatsapp'/
-    );
+    expect(content).toMatch(/import\s+\{[^}]*WhatsAppModule[^}]*\}\s+from\s+'nest-whatsapp'/);
     expect(content).toContain('WhatsAppMode.SANDBOX');
     // Recipients rendered as array of strings
     expect(content).toContain(

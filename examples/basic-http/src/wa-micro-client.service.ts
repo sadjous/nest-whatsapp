@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
-import type { WhatsAppMode } from '@softzenit/nest-whatsapp';
+import type { WhatsAppMode } from 'nest-whatsapp';
 
 @Injectable()
 export class WaMicroClientService {

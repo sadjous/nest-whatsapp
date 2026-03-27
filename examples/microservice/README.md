@@ -58,8 +58,8 @@ export class WaClientService {
 
 ```ts
 import { Module } from '@nestjs/common';
-import { WhatsAppModule, WhatsAppHealthIndicator } from 'nest-whatsapp';
-import { HealthCheckService, HealthCheck } from '@nestjs/terminus';
+import { WhatsAppHealthModule, WhatsAppHealthIndicator } from 'nest-whatsapp/health';
+import { TerminusModule, HealthCheckService, HealthCheck } from '@nestjs/terminus';
 import { Controller, Get } from '@nestjs/common';
 
 @Controller('health')
@@ -75,6 +75,6 @@ class HealthController {
   }
 }
 
-@Module({ imports: [WhatsAppModule.forHealth()], controllers: [HealthController] })
+@Module({ imports: [TerminusModule, WhatsAppHealthModule], controllers: [HealthController] })
 export class HealthModule {}
 ```

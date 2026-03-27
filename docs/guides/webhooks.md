@@ -97,25 +97,29 @@ To unsubscribe, use the `off*` counterparts (e.g. `offTextReceived`).
 
 ## Available Events
 
-| Method                  | Payload type                 | Fired when                          |
-| ----------------------- | ---------------------------- | ----------------------------------- |
-| `onTextReceived`        | `WhatsAppTextEvent`          | Inbound text message                |
-| `onImageReceived`       | `WhatsAppImageEvent`         | Inbound image                       |
-| `onAudioReceived`       | `WhatsAppAudioEvent`         | Inbound audio                       |
-| `onDocumentReceived`    | `WhatsAppDocumentEvent`      | Inbound document                    |
-| `onLocationReceived`    | `WhatsAppLocationEvent`      | Inbound location                    |
-| `onVideoReceived`       | `WhatsAppVideoEvent`         | Inbound video                       |
-| `onStickerReceived`     | `WhatsAppStickerEvent`       | Inbound sticker                     |
-| `onTemplateReceived`    | `WhatsAppTemplateEvent`      | Inbound template reply              |
-| `onInteractiveReceived` | `WhatsAppInteractiveEvent`   | Inbound interactive reply           |
-| `onContactsReceived`    | `WhatsAppContactsEvent`      | Inbound contact card                |
-| `onReactionReceived`    | `WhatsAppReactionEvent`      | Inbound reaction                    |
-| `onOrderReceived`       | `WhatsAppOrderEvent`         | Inbound order (catalog)             |
-| `onProductReceived`     | `WhatsAppProductEvent`       | Inbound product inquiry             |
-| `onSystemReceived`      | `WhatsAppSystemEvent`        | System message (e.g. number change) |
-| `onStatusReceived`      | `WhatsAppStatusEvent`        | Delivery / read receipt             |
-| `onReferralReceived`    | `WhatsAppReferralEvent`      | Click-to-WhatsApp ad referral       |
-| `onMessageReceived`     | raw `WhatsAppWebhookPayload` | Any inbound message (raw)           |
+Message event payloads have the shape `WhatsAppTypedMessageEvent<T>` — an object with
+`{ message, contact?, metadata? }` where `message` is narrowed to the specific message type.
+Status and referral events use their own dedicated types.
+
+| Method                  | Payload type                   | Fired when                          |
+| ----------------------- | ------------------------------ | ----------------------------------- |
+| `onTextReceived`        | `WhatsAppTypedMessageEvent`    | Inbound text message                |
+| `onImageReceived`       | `WhatsAppTypedMessageEvent`    | Inbound image                       |
+| `onAudioReceived`       | `WhatsAppTypedMessageEvent`    | Inbound audio                       |
+| `onDocumentReceived`    | `WhatsAppTypedMessageEvent`    | Inbound document                    |
+| `onLocationReceived`    | `WhatsAppTypedMessageEvent`    | Inbound location                    |
+| `onVideoReceived`       | `WhatsAppTypedMessageEvent`    | Inbound video                       |
+| `onStickerReceived`     | `WhatsAppTypedMessageEvent`    | Inbound sticker                     |
+| `onTemplateReceived`    | `WhatsAppTypedMessageEvent`    | Inbound template reply              |
+| `onInteractiveReceived` | `WhatsAppTypedMessageEvent`    | Inbound interactive reply           |
+| `onContactsReceived`    | `WhatsAppTypedMessageEvent`    | Inbound contact card                |
+| `onReactionReceived`    | `WhatsAppTypedMessageEvent`    | Inbound reaction                    |
+| `onOrderReceived`       | `WhatsAppTypedMessageEvent`    | Inbound order (catalog)             |
+| `onProductReceived`     | `WhatsAppTypedMessageEvent`    | Inbound product inquiry             |
+| `onSystemReceived`      | `WhatsAppTypedMessageEvent`    | System message (e.g. number change) |
+| `onStatusReceived`      | `WhatsAppStatusEvent`          | Delivery / read receipt             |
+| `onReferralReceived`    | `WhatsAppReferralEvent`        | Click-to-WhatsApp ad referral       |
+| `onMessageReceived`     | `WhatsAppMessageReceivedEvent` | Any inbound message (raw payload)   |
 
 ---
 

@@ -114,6 +114,7 @@ export class WhatsAppModule {
       useValue: client,
     }));
     return {
+      global: true,
       module: WhatsAppModule,
       imports: [createHttpModule()],
       controllers: [WhatsAppController],
@@ -130,6 +131,8 @@ export class WhatsAppModule {
         WhatsAppPhoneNumbersService,
       ],
       exports: [
+        WHATSAPP_RUNTIME_OPTIONS,
+        ...clients.map((client) => `WHATSAPP_CLIENT_${client.mode.toUpperCase()}`),
         WhatsAppService,
         WhatsAppEvents,
         WhatsAppMediaService,
@@ -166,6 +169,7 @@ export class WhatsAppModule {
     }));
 
     return {
+      global: true,
       module: WhatsAppModule,
       imports: [createHttpModule(), ...(options.imports ?? [])],
       controllers: [WhatsAppController],
@@ -182,6 +186,8 @@ export class WhatsAppModule {
         WhatsAppPhoneNumbersService,
       ],
       exports: [
+        WHATSAPP_RUNTIME_OPTIONS,
+        ...KNOWN_CLIENT_MODES.map((mode) => `WHATSAPP_CLIENT_${mode.toUpperCase()}`),
         WhatsAppService,
         WhatsAppEvents,
         WhatsAppMediaService,

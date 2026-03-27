@@ -239,9 +239,9 @@ sendReaction(to, messageId, emoji, clientName?)
 Send button or list interactive messages:
 
 ```ts
-import type { WhatsAppInteractivePayload } from 'nest-whatsapp';
+import type { WhatsAppOutboundInteractive } from 'nest-whatsapp';
 
-const interactive: WhatsAppInteractivePayload = {
+const interactive: WhatsAppOutboundInteractive = {
   type: 'button',
   body: { text: 'Choose an option:' },
   action: {
@@ -258,7 +258,7 @@ await wa.sendInteractive('+15551234567', interactive, WhatsAppMode.LIVE);
 Signature:
 
 ```ts
-sendInteractive(to, interactive: WhatsAppInteractivePayload, clientName?, replyToMessageId?)
+sendInteractive(to, interactive: WhatsAppOutboundInteractive, clientName?, replyToMessageId?)
 ```
 
 ---

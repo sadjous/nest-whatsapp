@@ -34,15 +34,15 @@ export function whatsapp(options: Options): Rule {
       const change = insertImport(sourceFile, modulePath, symbol, file);
       if (change) importChanges.push(change);
     };
-    maybeImport('WhatsAppModule', '@softzenit/nest-whatsapp');
-    maybeImport('WhatsAppMode', '@softzenit/nest-whatsapp');
+    maybeImport('WhatsAppModule', 'nest-whatsapp');
+    maybeImport('WhatsAppMode', 'nest-whatsapp');
     maybeImport('ConfigModule', '@nestjs/config');
     maybeImport('ConfigService', '@nestjs/config');
 
     // Build imports to add
     const importsToAdd: string[] = [];
     if (options.addHealth) {
-      maybeImport('WhatsAppHealthModule', '@softzenit/nest-whatsapp/health');
+      maybeImport('WhatsAppHealthModule', 'nest-whatsapp/health');
       importsToAdd.push('WhatsAppHealthModule');
     }
     if (options.addMicro)

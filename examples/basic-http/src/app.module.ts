@@ -5,9 +5,9 @@ import {
   WhatsAppModule,
   WhatsAppMode,
   WhatsAppModule as WhatsAppMicroServiceModule,
-} from '@softzenit/nest-whatsapp';
-import { WhatsAppHealthModule } from '@softzenit/nest-whatsapp/health';
-import { WhatsAppMetricsModule } from '@softzenit/nest-whatsapp/metrics';
+} from 'nest-whatsapp';
+import { WhatsAppHealthModule } from 'nest-whatsapp/health';
+import { WhatsAppMetricsModule } from 'nest-whatsapp/metrics';
 import { HealthController } from './health.controller';
 import { WaEventsLogger } from './wa-events.logger';
 import { WaMicroClientService } from './wa-micro-client.service';

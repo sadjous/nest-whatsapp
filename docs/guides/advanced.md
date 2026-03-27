@@ -17,12 +17,35 @@
 
 ## Prometheus Metrics
 
-`WhatsAppMetricsService` exposes five Prometheus-compatible metrics. Inject it into a controller
-to expose a `/metrics` scrape endpoint:
+`WhatsAppMetricsService` exposes five Prometheus-compatible metrics. It is **opt-in** — install
+`prom-client` and import `WhatsAppMetricsModule` from the `/metrics` sub-entry to enable it:
+
+```bash
+npm install prom-client
+```
+
+```ts
+// app.module.ts
+import { Module } from '@nestjs/common';
+import { WhatsAppModule } from 'nest-whatsapp';
+import { WhatsAppMetricsModule } from 'nest-whatsapp/metrics';
+
+@Module({
+  imports: [
+    WhatsAppModule.forRoot({
+      /* ... */
+    }),
+    WhatsAppMetricsModule,
+  ],
+})
+export class AppModule {}
+```
+
+Then inject `WhatsAppMetricsService` into a controller to expose a `/metrics` scrape endpoint:
 
 ```ts
 import { Controller, Get } from '@nestjs/common';
-import { WhatsAppMetricsService } from 'nest-whatsapp';
+import { WhatsAppMetricsService } from 'nest-whatsapp/metrics';
 
 @Controller('metrics')
 export class MetricsController {
@@ -58,13 +81,15 @@ for the WhatsApp Graph API endpoint.
 npm install @nestjs/terminus
 ```
 
+Import `WhatsAppHealthModule` from the `/health` sub-entry:
+
 ```ts
 import { Module } from '@nestjs/common';
 import { TerminusModule } from '@nestjs/terminus';
-import { WhatsAppModule } from 'nest-whatsapp';
+import { WhatsAppHealthModule } from 'nest-whatsapp/health';
 
 @Module({
-  imports: [TerminusModule, WhatsAppModule.forHealth()],
+  imports: [TerminusModule, WhatsAppHealthModule],
 })
 export class HealthModule {}
 ```
@@ -74,7 +99,7 @@ export class HealthModule {}
 ```ts
 import { Controller, Get } from '@nestjs/common';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
-import { WhatsAppHealthIndicator } from 'nest-whatsapp';
+import { WhatsAppHealthIndicator } from 'nest-whatsapp/health';
 
 @Controller('health')
 export class HealthController {
@@ -305,7 +330,7 @@ npx schematics nest-whatsapp:whatsapp \
 | -------------- | -------------------------------------------- |
 | `--module`     | Path to your app module file                 |
 | `--mode`       | `sandbox` or `live`                          |
-| `--add-health` | Inject `WhatsAppModule.forHealth()`          |
+| `--add-health` | Inject `WhatsAppHealthModule` from `/health` |
 | `--add-micro`  | Inject `WhatsAppModule.forMicroservice(...)` |
 | `--host`       | Microservice host (requires `--add-micro`)   |
 | `--port`       | Microservice port (requires `--add-micro`)   |

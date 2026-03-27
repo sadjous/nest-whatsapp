@@ -1,5 +1,5 @@
 {
-  "name": "@softzenit/nest-whatsapp",
+  "name": "nest-whatsapp",
   "version": "0.0.1",
   "schematics": "./schematics/whatsapp/collection.json",
   "description": "NestJS module for WhatsApp Cloud API (CJS/ESM)",
@@ -159,7 +159,9 @@
     }
   },
   "overrides": {
-    "js-yaml": "^4.1.1"
+    "js-yaml": "^4.1.1",
+    "handlebars": ">=4.7.9",
+    "flatted": ">=3.4.2"
   },
   "files": [
     "dist/*.js",

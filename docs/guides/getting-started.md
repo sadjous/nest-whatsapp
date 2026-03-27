@@ -23,6 +23,7 @@ Optional peer dependencies (install only what you need):
 npm install @nestjs/terminus           # health indicator
 npm install @nestjs/microservices      # TCP microservice transport
 npm install @nestjs/event-emitter      # wildcard event listeners
+npm install prom-client                # Prometheus metrics
 ```
 
 ---

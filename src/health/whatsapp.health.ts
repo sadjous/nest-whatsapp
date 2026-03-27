@@ -1,5 +1,4 @@
 import { Injectable, Inject, Optional } from '@nestjs/common';
-import { ModuleRef } from '@nestjs/core';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import type {
@@ -25,16 +24,19 @@ export class WhatsAppHealthIndicator {
 
   constructor(
     private readonly httpService: HttpService,
-    private readonly moduleRef: ModuleRef,
+    @Optional()
+    @Inject('WHATSAPP_CLIENT_SANDBOX')
+    private readonly sandboxConfig?: WhatsAppSandboxOptions,
+    @Optional()
+    @Inject('WHATSAPP_CLIENT_LIVE')
+    private readonly liveConfig?: WhatsAppLiveOptions,
     @Optional()
     @Inject(WHATSAPP_RUNTIME_OPTIONS)
     private readonly runtimeOptions?: WhatsAppRuntimeOptions
   ) {}
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
-    const sandboxConfig = this.resolveToken<WhatsAppSandboxOptions>('WHATSAPP_CLIENT_SANDBOX');
-    const liveConfig = this.resolveToken<WhatsAppLiveOptions>('WHATSAPP_CLIENT_LIVE');
-    const configReady = this.hasConfig(sandboxConfig, liveConfig);
+    const configReady = this.hasConfig(this.sandboxConfig, this.liveConfig);
     if (!configReady.ready) {
       const result = this.makeStatus(key, false, { message: configReady.reason });
       throw createHealthCheckError('WhatsApp config missing', result);
@@ -58,14 +60,6 @@ export class WhatsAppHealthIndicator {
       const message = err instanceof Error ? err.message : 'Unknown error';
       const result = this.makeStatus(key, false, { message });
       throw createHealthCheckError('WhatsApp API health check failed', result);
-    }
-  }
-
-  private resolveToken<T>(token: string): T | undefined {
-    try {
-      return this.moduleRef.get<T>(token, { strict: false });
-    } catch {
-      return undefined;
     }
   }
 

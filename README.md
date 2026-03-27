@@ -2,7 +2,7 @@
 
 [![npm version](https://img.shields.io/npm/v/nest-whatsapp)](https://www.npmjs.com/package/nest-whatsapp)
 [![Build Status](https://github.com/SoftZenIT/nest-whatsapp/actions/workflows/ci.yml/badge.svg)](https://github.com/SoftZenIT/nest-whatsapp/actions)
-[![Coverage](https://coveralls.io/repos/github/SoftZenIT/nest-whatsapp/badge.svg?branch=main)](https://coveralls.io/github/SoftZenIT/nest-whatsapp?branch=main)
+[![Coverage](https://coveralls.io/repos/github/SoftZenIT/nest-whatsapp/badge.svg?branch=master)](https://coveralls.io/github/SoftZenIT/nest-whatsapp?branch=master)
 [![API Docs](https://img.shields.io/badge/docs-typedoc-blue)](https://SoftZenIT.github.io/nest-whatsapp/)
 
 NestJS module for the [WhatsApp Cloud API](https://developers.facebook.com/docs/whatsapp/cloud-api).
@@ -34,7 +34,7 @@ Supports sandbox & live modes, webhooks, microservice transport, Prometheus metr
 - **Webhook controller** auto-registered with HMAC-SHA256 signature verification and payload size limiting
 - **Typed events** via `WhatsAppEvents` — subscribe to text, image, audio, video, reactions, referrals (Click-to-WhatsApp) and more
 - **Management APIs**: `WhatsAppMediaService`, `WhatsAppTemplatesService`, `WhatsAppPhoneNumbersService`
-- **Prometheus metrics** and **Nest Terminus** health indicator
+- **Prometheus metrics** (`nest-whatsapp/metrics`) and **Nest Terminus** health indicator (`nest-whatsapp/health`) — opt-in sub-entries, zero overhead when unused
 - **TCP microservice transport** via `forMicroservice`
 - **CLI schematic**: `nest generate whatsapp`
 - Full TypeScript support (CJS & ESM, strict mode)
@@ -123,6 +123,41 @@ export class NotificationService {
 ---
 
 ## Migration Notes
+
+### v2 (current)
+
+- **`WhatsAppMetricsService` removed from `forRoot`/`forRootAsync`/`forMicroservice`**: Prometheus
+  metrics are now opt-in. Import `WhatsAppMetricsModule` from `nest-whatsapp/metrics`
+  and add it to your app's imports to enable metrics. `prom-client` is now an optional peer
+  dependency — install it only when you use metrics.
+
+  ```bash
+  npm install prom-client
+  ```
+
+  ```ts
+  import { WhatsAppMetricsModule, WhatsAppMetricsService } from 'nest-whatsapp/metrics';
+
+  @Module({ imports: [WhatsAppMetricsModule] })
+  export class AppModule {}
+  ```
+
+- **`WhatsAppModule.forHealth()` removed**: The health indicator is now in its own module.
+  Import `WhatsAppHealthModule` from `nest-whatsapp/health`:
+
+  ```ts
+  import { WhatsAppHealthModule, WhatsAppHealthIndicator } from 'nest-whatsapp/health';
+
+  @Module({ imports: [TerminusModule, WhatsAppHealthModule] })
+  export class HealthModule {}
+  ```
+
+- **`WhatsAppHealthIndicator` import path** changed from `nest-whatsapp` →
+  `nest-whatsapp/health`.
+- **`WhatsAppMetricsService` import path** changed from `nest-whatsapp` →
+  `nest-whatsapp/metrics`.
+
+### v1
 
 - **`WhatsAppMode` is now an enum** (breaking change): use `WhatsAppMode.SANDBOX` and
   `WhatsAppMode.LIVE` instead of the string literals `'sandbox'` and `'live'`. The underlying

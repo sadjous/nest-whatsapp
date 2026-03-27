@@ -9,7 +9,7 @@ import {
   IsString,
   MaxLength,
 } from 'class-validator';
-import type { WhatsAppMode, WhatsAppContactCard } from '@softzenit/nest-whatsapp';
+import type { WhatsAppMode, WhatsAppContactCard } from 'nest-whatsapp';
 
 class BaseSendDto {
   @IsString()
