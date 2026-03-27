@@ -8,7 +8,10 @@ import {
   type WhatsAppLiveOptions,
   WhatsAppMode,
 } from '../interfaces/whatsapp-client-options.interface';
-import { WhatsAppMetricsService } from './whatsapp.metrics';
+import {
+  WHATSAPP_METRICS_SERVICE,
+  type IWhatsAppMetrics,
+} from '../interfaces/whatsapp-metrics.interface';
 import {
   WhatsAppAuthException,
   WhatsAppRateLimitException,
@@ -66,7 +69,7 @@ export class WhatsAppService implements OnModuleInit {
     private readonly httpService: HttpService,
     @Optional() @Inject('WHATSAPP_CLIENT_SANDBOX') sandboxConfig?: WhatsAppSandboxOptions,
     @Optional() @Inject('WHATSAPP_CLIENT_LIVE') liveConfig?: WhatsAppLiveOptions,
-    @Optional() private readonly metrics?: WhatsAppMetricsService,
+    @Optional() @Inject(WHATSAPP_METRICS_SERVICE) private readonly metrics?: IWhatsAppMetrics,
     @Optional()
     @Inject(WHATSAPP_RUNTIME_OPTIONS)
     runtimeOptions?: WhatsAppRuntimeOptions

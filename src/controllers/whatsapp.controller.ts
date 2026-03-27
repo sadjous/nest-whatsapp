@@ -4,6 +4,7 @@ import {
   Post,
   Req,
   Headers,
+  Inject,
   UnauthorizedException,
   Optional,
   PayloadTooLargeException,
@@ -17,14 +18,17 @@ import type {
   WhatsAppWebhookPayload,
   RawBodyRequestLike,
 } from '../interfaces/webhook.interfaces';
-import { WhatsAppMetricsService } from '../services/whatsapp.metrics';
+import {
+  WHATSAPP_METRICS_SERVICE,
+  type IWhatsAppMetrics,
+} from '../interfaces/whatsapp-metrics.interface';
 
 @Controller('whatsapp/webhook')
 export class WhatsAppController {
   constructor(
     private readonly events: WhatsAppEvents,
     @Optional() private readonly configService?: ConfigService,
-    @Optional() private readonly metrics?: WhatsAppMetricsService
+    @Optional() @Inject(WHATSAPP_METRICS_SERVICE) private readonly metrics?: IWhatsAppMetrics
   ) {}
 
   @Get()
