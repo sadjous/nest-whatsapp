@@ -1,6 +1,6 @@
 import { registerAs } from '@nestjs/config';
 import * as Joi from 'joi';
-import { WhatsAppMode } from '../../../src/interfaces/whatsapp-client-options.interface';
+import { WhatsAppMode } from '@softzenit/nest-whatsapp';
 
 export default registerAs('whatsapp', () => ({
   mode: process.env.WHATSAPP_MODE,

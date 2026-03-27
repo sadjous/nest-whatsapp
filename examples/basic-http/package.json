@@ -12,7 +12,7 @@
     "@nestjs/axios": "^4.0.0",
     "@nestjs/platform-express": "^11.0.0",
     "@nestjs/terminus": "^11.0.0",
-    "nest-whatsapp": "file:../../",
+    "@softzenit/nest-whatsapp": "file:../../",
     "body-parser": "^2.2.2",
     "express-rate-limit": "^8.3.1",
     "helmet": "^8.1.0",

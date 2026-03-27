@@ -1,5 +1,5 @@
 {
-  "name": "nest-whatsapp",
+  "name": "@softzenit/nest-whatsapp",
   "version": "0.0.1",
   "schematics": "./schematics/whatsapp/collection.json",
   "description": "NestJS module for WhatsApp Cloud API (CJS/ESM)",
@@ -29,6 +29,16 @@
   "license": "Apache-2.0",
   "type": "commonjs",
   "sideEffects": false,
+  "typesVersions": {
+    "*": {
+      "metrics": [
+        "./dist/metrics.d.ts"
+      ],
+      "health": [
+        "./dist/health.d.ts"
+      ]
+    }
+  },
   "exports": {
     ".": {
       "import": {

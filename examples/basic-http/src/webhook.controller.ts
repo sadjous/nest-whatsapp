@@ -2,12 +2,12 @@ import { Controller, Get, Post, Req, Headers, UnauthorizedException } from '@nes
 import { ConfigService } from '@nestjs/config';
 import type { Request } from 'express';
 import * as crypto from 'crypto';
-import { WhatsAppEvents } from 'nest-whatsapp';
+import { WhatsAppEvents } from '@softzenit/nest-whatsapp';
 import type {
   VerifyWebhookQuery,
   WhatsAppWebhookPayload,
   RawBodyRequestLike,
-} from '../../../src/interfaces/webhook.interfaces';
+} from '@softzenit/nest-whatsapp';
 
 @Controller('whatsapp/webhook')
 export class WebhookController {
