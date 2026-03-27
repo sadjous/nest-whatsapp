@@ -101,7 +101,7 @@ export class WhatsAppHealthIndicator {
     return {
       [key]: {
         status: healthy ? 'up' : 'down',
-        ...(data ?? {}),
+        ...data,
       },
     };
   }
