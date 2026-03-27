@@ -1,4 +1,5 @@
 import { HttpService } from '@nestjs/axios';
+import { ModuleRef } from '@nestjs/core';
 import { of, throwError } from 'rxjs';
 import { WhatsAppHealthIndicator } from './whatsapp.health';
 import { HealthCheckError } from '@nestjs/terminus';
@@ -22,6 +23,22 @@ const liveConfig: WhatsAppLiveOptions = {
   accessToken: 'token',
 };
 
+function makeModuleRef(sandbox?: WhatsAppSandboxOptions, live?: WhatsAppLiveOptions): ModuleRef {
+  return {
+    get: jest.fn((token: string) => {
+      if (token === 'WHATSAPP_CLIENT_SANDBOX') {
+        if (sandbox === undefined) throw new Error('not found');
+        return sandbox;
+      }
+      if (token === 'WHATSAPP_CLIENT_LIVE') {
+        if (live === undefined) throw new Error('not found');
+        return live;
+      }
+      throw new Error(`Unknown token: ${token}`);
+    }),
+  } as unknown as ModuleRef;
+}
+
 describe('WhatsAppHealthIndicator', () => {
   afterEach(() => {
     jest.resetAllMocks();
@@ -29,7 +46,7 @@ describe('WhatsAppHealthIndicator', () => {
 
   it('fails fast when no client configured', async () => {
     const http = { get: jest.fn() } as unknown as HttpService;
-    const indicator = new WhatsAppHealthIndicator(http);
+    const indicator = new WhatsAppHealthIndicator(http, makeModuleRef());
     await expect(indicator.isHealthy('wa')).rejects.toBeInstanceOf(HealthCheckError);
     expect(http.get).not.toHaveBeenCalled();
   });
@@ -37,7 +54,7 @@ describe('WhatsAppHealthIndicator', () => {
   it('fails fast when sandbox credentials incomplete', async () => {
     const http = { get: jest.fn() } as unknown as HttpService;
     const incomplete = { ...sandboxConfig, testRecipients: [] };
-    const indicator = new WhatsAppHealthIndicator(http, incomplete);
+    const indicator = new WhatsAppHealthIndicator(http, makeModuleRef(incomplete));
     await expect(indicator.isHealthy('wa')).rejects.toBeInstanceOf(HealthCheckError);
     expect(http.get).not.toHaveBeenCalled();
   });
@@ -45,7 +62,7 @@ describe('WhatsAppHealthIndicator', () => {
   it('fails fast when live credentials incomplete', async () => {
     const http = { get: jest.fn() } as unknown as HttpService;
     const incomplete = { ...liveConfig, accessToken: '' };
-    const indicator = new WhatsAppHealthIndicator(http, undefined, incomplete);
+    const indicator = new WhatsAppHealthIndicator(http, makeModuleRef(undefined, incomplete));
     await expect(indicator.isHealthy('wa')).rejects.toBeInstanceOf(HealthCheckError);
     expect(http.get).not.toHaveBeenCalled();
   });
@@ -55,7 +72,7 @@ describe('WhatsAppHealthIndicator', () => {
     const originalEnv = process.env.WHATSAPP_HEALTH_SKIP_EXTERNAL;
     process.env.WHATSAPP_HEALTH_SKIP_EXTERNAL = 'true';
     try {
-      const indicator = new WhatsAppHealthIndicator(http, sandboxConfig);
+      const indicator = new WhatsAppHealthIndicator(http, makeModuleRef(sandboxConfig));
       const result = await indicator.isHealthy('wa');
       expect(result.wa.status).toBe('up');
       expect(http.get).not.toHaveBeenCalled();
@@ -68,7 +85,7 @@ describe('WhatsAppHealthIndicator', () => {
     const http = {
       get: jest.fn(() => of({ data: {} })),
     } as unknown as HttpService;
-    const indicator = new WhatsAppHealthIndicator(http, undefined, liveConfig, {
+    const indicator = new WhatsAppHealthIndicator(http, makeModuleRef(undefined, liveConfig), {
       apiVersion: 'v18.0',
       httpTimeoutMs: 3000,
       httpRetries: 2,
@@ -88,7 +105,7 @@ describe('WhatsAppHealthIndicator', () => {
     const http = {
       get: jest.fn(() => throwError(() => new Error('boom'))),
     } as unknown as HttpService;
-    const indicator = new WhatsAppHealthIndicator(http, undefined, liveConfig);
+    const indicator = new WhatsAppHealthIndicator(http, makeModuleRef(undefined, liveConfig));
     await expect(indicator.isHealthy('wa')).rejects.toBeInstanceOf(HealthCheckError);
   });
 });

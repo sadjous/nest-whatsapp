@@ -42,7 +42,7 @@
   "exports": {
     ".": {
       "import": {
-        "types": "./dist/index.d.mts",
+        "types": "./dist/index.d.ts",
         "default": "./dist/index.mjs"
       },
       "require": {
@@ -52,7 +52,7 @@
     },
     "./metrics": {
       "import": {
-        "types": "./dist/metrics.d.mts",
+        "types": "./dist/metrics.d.ts",
         "default": "./dist/metrics.mjs"
       },
       "require": {
@@ -62,7 +62,7 @@
     },
     "./health": {
       "import": {
-        "types": "./dist/health.d.mts",
+        "types": "./dist/health.d.ts",
         "default": "./dist/health.mjs"
       },
       "require": {

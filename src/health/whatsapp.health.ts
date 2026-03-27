@@ -1,4 +1,5 @@
 import { Injectable, Inject, Optional } from '@nestjs/common';
+import { ModuleRef } from '@nestjs/core';
 import { HttpService } from '@nestjs/axios';
 import { firstValueFrom } from 'rxjs';
 import type {
@@ -24,17 +25,16 @@ export class WhatsAppHealthIndicator {
 
   constructor(
     private readonly httpService: HttpService,
-    @Optional()
-    @Inject('WHATSAPP_CLIENT_SANDBOX')
-    private readonly sandboxConfig?: WhatsAppSandboxOptions,
-    @Optional() @Inject('WHATSAPP_CLIENT_LIVE') private readonly liveConfig?: WhatsAppLiveOptions,
+    private readonly moduleRef: ModuleRef,
     @Optional()
     @Inject(WHATSAPP_RUNTIME_OPTIONS)
     private readonly runtimeOptions?: WhatsAppRuntimeOptions
   ) {}
 
   async isHealthy(key: string): Promise<HealthIndicatorResult> {
-    const configReady = this.hasConfig();
+    const sandboxConfig = this.resolveToken<WhatsAppSandboxOptions>('WHATSAPP_CLIENT_SANDBOX');
+    const liveConfig = this.resolveToken<WhatsAppLiveOptions>('WHATSAPP_CLIENT_LIVE');
+    const configReady = this.hasConfig(sandboxConfig, liveConfig);
     if (!configReady.ready) {
       const result = this.makeStatus(key, false, { message: configReady.reason });
       throw createHealthCheckError('WhatsApp config missing', result);
@@ -61,21 +61,32 @@ export class WhatsAppHealthIndicator {
     }
   }
 
-  private hasConfig(): { ready: boolean; reason?: string } {
-    if (!this.sandboxConfig && !this.liveConfig) {
+  private resolveToken<T>(token: string): T | undefined {
+    try {
+      return this.moduleRef.get<T>(token, { strict: false });
+    } catch {
+      return undefined;
+    }
+  }
+
+  private hasConfig(
+    sandboxConfig?: WhatsAppSandboxOptions,
+    liveConfig?: WhatsAppLiveOptions
+  ): { ready: boolean; reason?: string } {
+    if (!sandboxConfig && !liveConfig) {
       return { ready: false, reason: 'No WhatsApp client configured' };
     }
-    if (this.sandboxConfig) {
+    if (sandboxConfig) {
       if (
-        !this.sandboxConfig.testPhoneNumberId ||
-        !this.sandboxConfig.temporaryAccessToken ||
-        !this.sandboxConfig.testRecipients?.length
+        !sandboxConfig.testPhoneNumberId ||
+        !sandboxConfig.temporaryAccessToken ||
+        !sandboxConfig.testRecipients?.length
       ) {
         return { ready: false, reason: 'Sandbox credentials incomplete' };
       }
     }
-    if (this.liveConfig) {
-      if (!this.liveConfig.phoneNumberId || !this.liveConfig.accessToken) {
+    if (liveConfig) {
+      if (!liveConfig.phoneNumberId || !liveConfig.accessToken) {
         return { ready: false, reason: 'Live credentials incomplete' };
       }
     }
