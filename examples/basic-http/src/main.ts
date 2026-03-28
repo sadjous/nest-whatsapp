@@ -39,7 +39,13 @@ async function bootstrap() {
       },
     })
   );
-  const port = Number(process.env.PORT ?? '3344');
+  const DEFAULT_PORT = 3344;
+  const envPort = process.env.PORT;
+  const parsedPort = envPort !== undefined ? Number(envPort) : DEFAULT_PORT;
+  const port =
+    Number.isFinite(parsedPort) && parsedPort >= 1 && parsedPort <= 65535
+      ? parsedPort
+      : DEFAULT_PORT;
   await app.listen(port);
   console.log(`Basic HTTP example running on http://localhost:${port}`);
 }
