@@ -32,7 +32,7 @@ npm install nest-whatsapp
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import whatsappConfig, { WhatsappConfigSchema } from './config/whatsapp.config';
-import { WhatsAppModule } from 'nest-whatsapp';
+import { WhatsAppModule, WhatsAppMode } from 'nest-whatsapp';
 import { WhatsAppController } from './controllers/whatsapp.controller';
 
 @Module({
@@ -49,13 +49,13 @@ import { WhatsAppController } from './controllers/whatsapp.controller';
         const cfg = cs.get('whatsapp');
         return cfg.mode === 'sandbox'
           ? {
-              mode: 'sandbox',
+              mode: WhatsAppMode.SANDBOX,
               testPhoneNumberId: cfg.sandbox.testPhoneNumberId,
               temporaryAccessToken: cfg.sandbox.temporaryAccessToken,
               testRecipients: cfg.sandbox.testRecipients,
             }
           : {
-              mode: 'live',
+              mode: WhatsAppMode.LIVE,
               businessAccountId: cfg.live.businessAccountId,
               phoneNumberId: cfg.live.phoneNumberId,
               accessToken: cfg.live.accessToken,

@@ -21,7 +21,6 @@ Supports sandbox & live modes, webhooks, microservice transport, Prometheus metr
   - [Webhooks & Events](./docs/guides/webhooks.md) — receiving messages, security, event types
   - [Modes: Sandbox vs Live](./docs/guides/modes.md) — sandbox safety, allow-list, switching modes
   - [Advanced](./docs/guides/advanced.md) — metrics, health checks, microservice, management APIs, schematics
-- [Migration Notes](#migration-notes)
 - [License](#license)
 
 ---
@@ -119,58 +118,6 @@ export class NotificationService {
 | [Webhooks & Events](./docs/guides/webhooks.md)        | Bootstrap setup, `WhatsAppEvents`, all event types, security                |
 | [Modes: Sandbox vs Live](./docs/guides/modes.md)      | `WhatsAppMode` enum, testRecipients allow-list, multi-mode                  |
 | [Advanced](./docs/guides/advanced.md)                 | Metrics, health, microservice, media/templates/phone management, schematics |
-
----
-
-## Migration Notes
-
-### v2 (current)
-
-- **`WhatsAppMetricsService` removed from `forRoot`/`forRootAsync`/`forMicroservice`**: Prometheus
-  metrics are now opt-in. Import `WhatsAppMetricsModule` from `nest-whatsapp/metrics`
-  and add it to your app's imports to enable metrics. `prom-client` is now an optional peer
-  dependency — install it only when you use metrics.
-
-  ```bash
-  npm install prom-client
-  ```
-
-  ```ts
-  import { WhatsAppMetricsModule, WhatsAppMetricsService } from 'nest-whatsapp/metrics';
-
-  @Module({ imports: [WhatsAppMetricsModule] })
-  export class AppModule {}
-  ```
-
-- **`WhatsAppModule.forHealth()` removed**: The health indicator is now in its own module.
-  Import `WhatsAppHealthModule` from `nest-whatsapp/health`:
-
-  ```ts
-  import { WhatsAppHealthModule, WhatsAppHealthIndicator } from 'nest-whatsapp/health';
-
-  @Module({ imports: [TerminusModule, WhatsAppHealthModule] })
-  export class HealthModule {}
-  ```
-
-- **`WhatsAppHealthIndicator` import path** changed from `nest-whatsapp` →
-  `nest-whatsapp/health`.
-- **`WhatsAppMetricsService` import path** changed from `nest-whatsapp` →
-  `nest-whatsapp/metrics`.
-
-### v1
-
-- **`WhatsAppMode` is now an enum** (breaking change): use `WhatsAppMode.SANDBOX` and
-  `WhatsAppMode.LIVE` instead of the string literals `'sandbox'` and `'live'`. The underlying
-  string values are unchanged (`'sandbox'`, `'live'`), so no runtime behaviour is affected.
-- **`WhatsAppTemplateStatus`, `WhatsAppTemplateCategory`, `WhatsAppNameStatus`,
-  `WhatsAppQualityRating`** are also now enums. Update any type annotations that referenced
-  the old string union types.
-- **Default Graph API version** is now `v25.0` (previously `v17.0`). Override via
-  `WHATSAPP_GRAPH_API_VERSION` if you need to pin a specific version.
-- **`sendTemplate` signature** has a new optional `languageCode` parameter (after `clientName`,
-  before `replyToMessageId`), defaulting to `'en_US'`.
-- Webhook payloads are capped at `WHATSAPP_WEBHOOK_MAX_BODY_BYTES` (default 2 MB). Increase
-  explicitly if your payloads are larger.
 
 ---
 
