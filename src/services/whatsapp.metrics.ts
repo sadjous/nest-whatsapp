@@ -1,15 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { WhatsAppMode } from '../interfaces/whatsapp-client-options.interface';
 import { Counter, Gauge, Histogram, collectDefaultMetrics, register } from 'prom-client';
+import { WhatsAppMessageType } from '../interfaces/webhook.interfaces';
+
+type MessagesSentLabels = 'type' | 'mode';
+type ErrorsLabels = 'type' | 'mode' | 'status';
+type RequestDurationLabels = 'type' | 'mode' | 'status';
+type BuildInfoLabels = 'version' | 'node_version' | 'environment';
 
 let defaultMetricsRegistered = false;
 
 @Injectable()
 export class WhatsAppMetricsService {
-  private messagesSentCounter: Counter<'type' | 'mode'>;
-  private errorsCounter: Counter<'type' | 'mode' | 'status'>;
-  private webhookCounter: Counter<string>;
-  private requestDuration: Histogram<'type' | 'mode' | 'status'>;
-  private buildInfoGauge: Gauge<'version' | 'node_version' | 'environment'>;
+  private readonly messagesSentCounter: Counter<MessagesSentLabels>;
+  private readonly errorsCounter: Counter<ErrorsLabels>;
+  private readonly webhookCounter: Counter<string>;
+  private readonly requestDuration: Histogram<RequestDurationLabels>;
+  private readonly buildInfoGauge: Gauge<BuildInfoLabels>;
 
   constructor() {
     if (!defaultMetricsRegistered) {
@@ -17,14 +24,14 @@ export class WhatsAppMetricsService {
       defaultMetricsRegistered = true;
     }
     this.messagesSentCounter =
-      (register.getSingleMetric('whatsapp_messages_sent_total') as Counter<'type' | 'mode'>) ||
+      (register.getSingleMetric('whatsapp_messages_sent_total') as Counter<MessagesSentLabels>) ||
       new Counter({
         name: 'whatsapp_messages_sent_total',
         help: 'Total number of WhatsApp messages sent',
         labelNames: ['type', 'mode'],
       });
     this.errorsCounter =
-      (register.getSingleMetric('whatsapp_errors_total') as Counter<'type' | 'mode' | 'status'>) ||
+      (register.getSingleMetric('whatsapp_errors_total') as Counter<ErrorsLabels>) ||
       new Counter({
         name: 'whatsapp_errors_total',
         help: 'Total number of WhatsApp errors',
@@ -37,9 +44,9 @@ export class WhatsAppMetricsService {
         help: 'Total number of incoming WhatsApp webhook events',
       });
     this.requestDuration =
-      (register.getSingleMetric('whatsapp_request_duration_seconds') as Histogram<
-        'type' | 'mode' | 'status'
-      >) ||
+      (register.getSingleMetric(
+        'whatsapp_request_duration_seconds'
+      ) as Histogram<RequestDurationLabels>) ||
       new Histogram({
         name: 'whatsapp_request_duration_seconds',
         help: 'Duration of WhatsApp outbound requests',
@@ -47,9 +54,7 @@ export class WhatsAppMetricsService {
         buckets: [0.05, 0.1, 0.2, 0.5, 1, 2, 5],
       });
     this.buildInfoGauge =
-      (register.getSingleMetric('whatsapp_build_info') as Gauge<
-        'version' | 'node_version' | 'environment'
-      >) ||
+      (register.getSingleMetric('whatsapp_build_info') as Gauge<BuildInfoLabels>) ||
       new Gauge({
         name: 'whatsapp_build_info',
         help: 'Build/version metadata for the WhatsApp module',
@@ -65,11 +70,11 @@ export class WhatsAppMetricsService {
       .set(1);
   }
 
-  incrementMessagesSent(type: string, mode: string): void {
+  incrementMessagesSent(type: WhatsAppMessageType, mode: WhatsAppMode): void {
     this.messagesSentCounter.labels({ type, mode }).inc();
   }
 
-  incrementErrors(type: string, mode: string, status: string): void {
+  incrementErrors(type: WhatsAppMessageType, mode: WhatsAppMode, status: string): void {
     this.errorsCounter.labels({ type, mode, status }).inc();
   }
 
@@ -81,7 +86,10 @@ export class WhatsAppMetricsService {
     return register.metrics();
   }
 
-  startRequestTimer(type: string, mode: string): (labels?: { status?: string }) => void {
+  startRequestTimer(
+    type: WhatsAppMessageType,
+    mode: WhatsAppMode
+  ): (labels?: { status?: string }) => void {
     return this.requestDuration.startTimer({ type, mode });
   }
 
