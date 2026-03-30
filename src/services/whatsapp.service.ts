@@ -1,4 +1,4 @@
-import { Injectable, Inject, Logger, Optional, OnModuleInit } from '@nestjs/common';
+import { Injectable, Inject, Logger, Optional, OnModuleInit, HttpStatus } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
 import { lastValueFrom } from 'rxjs';
 import type { AxiosRequestConfig } from 'axios';
@@ -139,7 +139,8 @@ export class WhatsAppService implements OnModuleInit {
     labels: { type: WhatsAppMessageType; mode: WhatsAppMode }
   ): Promise<string> {
     let attempt = 0;
-    const endTimer = this.metrics?.startRequestTimer(labels.type, labels.mode);
+    const endTimer: ((l?: { status?: string }) => void) | undefined =
+      this.metrics?.startRequestTimer(labels.type, labels.mode);
     const axiosConfig = this.mergeAxiosConfig(config, token);
 
     while (true) {
@@ -181,10 +182,10 @@ export class WhatsAppService implements OnModuleInit {
   private recordError(
     labels: { type: WhatsAppMessageType; mode: WhatsAppMode },
     endTimer: ((l?: { status?: string }) => void) | undefined,
-    status: string
+    status: HttpStatus | string
   ): void {
-    this.metrics?.incrementErrors(labels.type, labels.mode, status);
-    endTimer?.({ status });
+    this.metrics?.incrementErrors(labels.type, labels.mode, String(status));
+    endTimer?.({ status: String(status) });
   }
 
   private throwMappedError(
@@ -194,7 +195,7 @@ export class WhatsAppService implements OnModuleInit {
     endTimer: ((l?: { status?: string }) => void) | undefined
   ): never {
     if (parsed.is429) {
-      this.recordError(labels, endTimer, '429');
+      this.recordError(labels, endTimer, HttpStatus.TOO_MANY_REQUESTS);
       throw new WhatsAppRateLimitException();
     }
     const errStatus = parsed.status ? String(parsed.status) : (parsed.code ?? 'error');
