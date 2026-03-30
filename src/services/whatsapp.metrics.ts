@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { WhatsAppMode } from '../interfaces/whatsapp-client-options.interface';
+import type { WhatsAppMode } from '../interfaces/whatsapp-client-options.interface';
 import { Counter, Gauge, Histogram, collectDefaultMetrics, register } from 'prom-client';
-import { WhatsAppMessageType } from '../interfaces/webhook.interfaces';
+import type { WhatsAppMessageType } from '../interfaces/webhook.interfaces';
 
 type MessagesSentLabels = 'type' | 'mode';
 type ErrorsLabels = 'type' | 'mode' | 'status';
