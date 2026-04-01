@@ -18,6 +18,7 @@
     "dotenv": "^17.3.1",
     "express-rate-limit": "^8.3.1",
     "helmet": "^8.1.0",
+    "joi": "^17.13.3",
     "nest-whatsapp": "file:../../",
     "rxjs": "^7.0.0"
   },

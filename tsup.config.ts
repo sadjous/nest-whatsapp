@@ -9,7 +9,7 @@ export default defineConfig({
   format: ['cjs', 'esm'],
   dts: true,
   clean: true,
-  sourcemap: process.env.NODE_ENV !== 'production',
+  sourcemap: process.env.NODE_ENV === 'development',
   minify: true,
   treeshake: true,
   external: [
