@@ -121,6 +121,7 @@
     "jest": "^30.2.0",
     "joi": "^17.13.3",
     "lint-staged": "^16.1.2",
+    "prom-client": "^14.2.0",
     "prettier": "^3.8.1",
     "semantic-release": "^24.0.0",
     "simple-git-hooks": "^2.13.1",
