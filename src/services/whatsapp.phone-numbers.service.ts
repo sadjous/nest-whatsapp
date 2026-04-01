@@ -8,6 +8,7 @@ import {
   type WhatsAppSandboxOptions,
   type WhatsAppLiveOptions,
 } from '../interfaces/whatsapp-client-options.interface';
+import { resolveClientConfig, resolveAuthToken } from './whatsapp-client.utils';
 import {
   WHATSAPP_RUNTIME_OPTIONS,
   type WhatsAppRuntimeOptions,
@@ -43,18 +44,6 @@ export class WhatsAppPhoneNumbersService {
     this.httpTimeoutMs = runtimeOptions?.httpTimeoutMs ?? 10000;
   }
 
-  private getConfig(clientName: WhatsAppMode): WhatsAppClientOptions {
-    const cfg = clientName === WhatsAppMode.SANDBOX ? this.sandboxConfig : this.liveConfig;
-    if (!cfg) throw new Error(`WhatsApp client config '${clientName}' not provided`);
-    return cfg;
-  }
-
-  private getAuthToken(config: WhatsAppClientOptions): string {
-    return config.mode === WhatsAppMode.LIVE
-      ? (config as WhatsAppLiveOptions).accessToken
-      : (config as WhatsAppSandboxOptions).temporaryAccessToken;
-  }
-
   private buildAxiosConfig(config: WhatsAppClientOptions): AxiosRequestConfig {
     const overrides = config.httpConfig ?? {};
     return {
@@ -64,7 +53,7 @@ export class WhatsAppPhoneNumbersService {
       validateStatus: overrides.validateStatus ?? ((s) => s < 400),
       headers: {
         ...(overrides.headers ?? {}),
-        Authorization: `Bearer ${this.getAuthToken(config)}`,
+        Authorization: `Bearer ${resolveAuthToken(config)}`,
       },
     };
   }
@@ -95,7 +84,7 @@ export class WhatsAppPhoneNumbersService {
     wabaId: string,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<WhatsAppPhoneNumber[]> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${wabaId}/phone_numbers`;
     this.logger.log(`listPhoneNumbers wabaId=${wabaId} client=${clientName}`);
     try {
@@ -115,7 +104,7 @@ export class WhatsAppPhoneNumbersService {
     phoneNumberId: string,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<WhatsAppPhoneNumber> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${phoneNumberId}`;
     this.logger.log(`getPhoneNumber phoneNumberId=${phoneNumberId} client=${clientName}`);
     try {
@@ -139,7 +128,7 @@ export class WhatsAppPhoneNumbersService {
     locale: string = 'en_US',
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${phoneNumberId}/request_code`;
     this.logger.log(
       `requestVerificationCode phoneNumberId=${phoneNumberId} method=${codeMethod} client=${clientName}`
@@ -164,7 +153,7 @@ export class WhatsAppPhoneNumbersService {
     code: string,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${phoneNumberId}/verify_code`;
     this.logger.log(`verifyCode phoneNumberId=${phoneNumberId} client=${clientName}`);
     try {
@@ -183,7 +172,7 @@ export class WhatsAppPhoneNumbersService {
     pin: string,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${phoneNumberId}`;
     this.logger.log(`setTwoStepPin phoneNumberId=${phoneNumberId} client=${clientName}`);
     try {

@@ -8,6 +8,7 @@ import {
   type WhatsAppSandboxOptions,
   type WhatsAppLiveOptions,
 } from '../interfaces/whatsapp-client-options.interface';
+import { resolveClientConfig, resolveAuthToken } from './whatsapp-client.utils';
 import {
   WHATSAPP_RUNTIME_OPTIONS,
   type WhatsAppRuntimeOptions,
@@ -45,18 +46,6 @@ export class WhatsAppTemplatesService {
     this.httpTimeoutMs = runtimeOptions?.httpTimeoutMs ?? 10000;
   }
 
-  private getConfig(clientName: WhatsAppMode): WhatsAppClientOptions {
-    const cfg = clientName === WhatsAppMode.SANDBOX ? this.sandboxConfig : this.liveConfig;
-    if (!cfg) throw new Error(`WhatsApp client config '${clientName}' not provided`);
-    return cfg;
-  }
-
-  private getAuthToken(config: WhatsAppClientOptions): string {
-    return config.mode === WhatsAppMode.LIVE
-      ? (config as WhatsAppLiveOptions).accessToken
-      : (config as WhatsAppSandboxOptions).temporaryAccessToken;
-  }
-
   private buildAxiosConfig(config: WhatsAppClientOptions): AxiosRequestConfig {
     const overrides = config.httpConfig ?? {};
     return {
@@ -66,7 +55,7 @@ export class WhatsAppTemplatesService {
       validateStatus: overrides.validateStatus ?? ((s) => s < 400),
       headers: {
         ...(overrides.headers ?? {}),
-        Authorization: `Bearer ${this.getAuthToken(config)}`,
+        Authorization: `Bearer ${resolveAuthToken(config)}`,
       },
     };
   }
@@ -84,7 +73,7 @@ export class WhatsAppTemplatesService {
     wabaId: string,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<WhatsAppTemplate[]> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${wabaId}/message_templates`;
     this.logger.log(`listTemplates wabaId=${wabaId} client=${clientName}`);
     try {
@@ -102,7 +91,7 @@ export class WhatsAppTemplatesService {
     templateId: string,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<WhatsAppTemplate> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${templateId}`;
     this.logger.log(`getTemplate templateId=${templateId} client=${clientName}`);
     try {
@@ -121,7 +110,7 @@ export class WhatsAppTemplatesService {
     template: WhatsAppCreateTemplateDto,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<{ id: string }> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${wabaId}/message_templates`;
     this.logger.log(`createTemplate name=${template.name} wabaId=${wabaId} client=${clientName}`);
     try {
@@ -140,7 +129,7 @@ export class WhatsAppTemplatesService {
     template: WhatsAppUpdateTemplateDto,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${templateId}`;
     this.logger.log(`updateTemplate templateId=${templateId} client=${clientName}`);
     try {
@@ -159,7 +148,7 @@ export class WhatsAppTemplatesService {
     name: string,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `https://graph.facebook.com/${this.apiVersion}/${wabaId}/message_templates`;
     this.logger.log(`deleteTemplate name=${name} wabaId=${wabaId} client=${clientName}`);
     try {

@@ -74,7 +74,6 @@
   },
   "dependencies": {
     "axios": "^1.13.6",
-    "joi": "^17.13.3",
     "reflect-metadata": "^0.2.2"
   },
   "simple-git-hooks": {
@@ -120,6 +119,7 @@
     "globals": "^17.4.0",
     "is-ci": "^3.0.1",
     "jest": "^30.2.0",
+    "joi": "^17.13.3",
     "lint-staged": "^16.1.2",
     "prettier": "^3.8.1",
     "semantic-release": "^24.0.0",
@@ -139,6 +139,7 @@
     "@nestjs/event-emitter": "^2 || ^3",
     "@nestjs/microservices": "^10 || ^11",
     "@nestjs/terminus": "^11",
+    "joi": "^17.13.3",
     "prom-client": "^14 || ^15"
   },
   "peerDependenciesMeta": {
@@ -152,6 +153,9 @@
       "optional": true
     },
     "@nestjs/event-emitter": {
+      "optional": true
+    },
+    "joi": {
       "optional": true
     },
     "prom-client": {

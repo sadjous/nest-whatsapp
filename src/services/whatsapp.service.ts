@@ -28,6 +28,12 @@ import type {
   WhatsAppContactCard,
 } from '../interfaces/webhook.interfaces';
 import { WhatsAppMessageType } from '../interfaces/webhook.interfaces';
+import {
+  isLiveConfig,
+  isSandboxConfig,
+  resolveClientConfig,
+  resolveAuthToken,
+} from './whatsapp-client.utils';
 
 type AxiosLikeError = {
   response?: { status?: number; headers?: Record<string, unknown> };
@@ -86,31 +92,11 @@ export class WhatsAppService implements OnModuleInit {
     };
   }
 
-  private isLiveConfig(cfg: WhatsAppClientOptions): cfg is WhatsAppLiveOptions {
-    return cfg.mode === WhatsAppMode.LIVE;
-  }
-
-  private isSandboxConfig(cfg: WhatsAppClientOptions): cfg is WhatsAppSandboxOptions {
-    return cfg.mode === WhatsAppMode.SANDBOX;
-  }
-
-  private getConfig(clientName: WhatsAppMode): WhatsAppClientOptions {
-    const cfg = clientName === WhatsAppMode.SANDBOX ? this.sandboxConfig : this.liveConfig;
-    if (!cfg) {
-      throw new Error(`WhatsApp client config '${clientName}' not provided`);
-    }
-    return cfg;
-  }
-
   private getEndpoint(config: WhatsAppClientOptions): string {
     const v = this.runtime.apiVersion;
-    return this.isLiveConfig(config)
+    return isLiveConfig(config)
       ? `https://graph.facebook.com/${v}/${config.phoneNumberId}/messages`
       : `https://graph.facebook.com/${v}/${config.testPhoneNumberId}/messages`;
-  }
-
-  private getAuthToken(config: WhatsAppClientOptions): string {
-    return this.isLiveConfig(config) ? config.accessToken : config.temporaryAccessToken;
   }
 
   /** Resolves a string URL or typed WhatsAppMediaSource into a Graph API media field. */
@@ -125,9 +111,7 @@ export class WhatsAppService implements OnModuleInit {
   /** Builds the base URL for phone-number-scoped management endpoints (non-messages). */
   private getPhoneNumberBaseUrl(config: WhatsAppClientOptions): string {
     const v = this.runtime.apiVersion;
-    const phoneNumberId = this.isLiveConfig(config)
-      ? config.phoneNumberId
-      : config.testPhoneNumberId;
+    const phoneNumberId = isLiveConfig(config) ? config.phoneNumberId : config.testPhoneNumberId;
     return `https://graph.facebook.com/${v}/${phoneNumberId}`;
   }
 
@@ -139,8 +123,7 @@ export class WhatsAppService implements OnModuleInit {
     labels: { type: WhatsAppMessageType; mode: WhatsAppMode }
   ): Promise<string> {
     let attempt = 0;
-    const endTimer: ((l?: { status?: string }) => void) | undefined =
-      this.metrics?.startRequestTimer(labels.type, labels.mode);
+    const endTimer = this.metrics?.startRequestTimer(labels.type, labels.mode);
     const axiosConfig = this.mergeAxiosConfig(config, token);
 
     while (true) {
@@ -235,7 +218,7 @@ export class WhatsAppService implements OnModuleInit {
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
     replyToMessageId?: string
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -246,7 +229,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendText', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.TEXT,
       mode: config.mode,
     });
@@ -273,7 +256,7 @@ export class WhatsAppService implements OnModuleInit {
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
     replyToMessageId?: string
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -284,7 +267,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendMedia', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.IMAGE,
       mode: config.mode,
     });
@@ -308,7 +291,7 @@ export class WhatsAppService implements OnModuleInit {
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
     replyToMessageId?: string
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -319,7 +302,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendAudio', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.AUDIO,
       mode: config.mode,
     });
@@ -346,7 +329,7 @@ export class WhatsAppService implements OnModuleInit {
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
     replyToMessageId?: string
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -357,7 +340,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendDocument', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.DOCUMENT,
       mode: config.mode,
     });
@@ -372,7 +355,7 @@ export class WhatsAppService implements OnModuleInit {
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
     replyToMessageId?: string
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -383,7 +366,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendLocation', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.LOCATION,
       mode: config.mode,
     });
@@ -397,7 +380,7 @@ export class WhatsAppService implements OnModuleInit {
     replyToMessageId?: string,
     languageCode: string = 'en_US'
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -414,7 +397,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendTemplate', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.TEMPLATE,
       mode: config.mode,
     });
@@ -441,7 +424,7 @@ export class WhatsAppService implements OnModuleInit {
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
     replyToMessageId?: string
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -452,7 +435,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendVideo', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.VIDEO,
       mode: config.mode,
     });
@@ -476,7 +459,7 @@ export class WhatsAppService implements OnModuleInit {
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
     replyToMessageId?: string
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -487,7 +470,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendSticker', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.STICKER,
       mode: config.mode,
     });
@@ -499,7 +482,7 @@ export class WhatsAppService implements OnModuleInit {
     emoji: string,
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -509,7 +492,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendReaction', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.REACTION,
       mode: config.mode,
     });
@@ -521,7 +504,7 @@ export class WhatsAppService implements OnModuleInit {
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
     replyToMessageId?: string
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -532,7 +515,7 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendInteractive', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.INTERACTIVE,
       mode: config.mode,
     });
@@ -544,7 +527,7 @@ export class WhatsAppService implements OnModuleInit {
     clientName: WhatsAppMode = WhatsAppMode.LIVE,
     replyToMessageId?: string
   ): Promise<string> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = this.getEndpoint(config);
     const payload: WhatsAppOutboundPayload = {
       messaging_product: 'whatsapp',
@@ -555,16 +538,16 @@ export class WhatsAppService implements OnModuleInit {
     };
     this.ensureSandboxRecipient(to, config);
     this.logSendOperation('sendContact', to, clientName, payload);
-    return this.postWithRetry(url, payload, this.getAuthToken(config), config, {
+    return this.postWithRetry(url, payload, resolveAuthToken(config), config, {
       type: WhatsAppMessageType.CONTACTS,
       mode: config.mode,
     });
   }
 
   async markAsRead(messageId: string, clientName: WhatsAppMode = WhatsAppMode.LIVE): Promise<void> {
-    const config = this.getConfig(clientName);
+    const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const url = `${this.getPhoneNumberBaseUrl(config)}/messages`;
-    const token = this.getAuthToken(config);
+    const token = resolveAuthToken(config);
     const axiosConfig = this.mergeAxiosConfig(config, token);
     const payload = { messaging_product: 'whatsapp', status: 'read', message_id: messageId };
     this.logger.log(`markAsRead messageId=${messageId} client=${clientName}`);
@@ -596,7 +579,7 @@ export class WhatsAppService implements OnModuleInit {
   }
 
   private ensureSandboxRecipient(to: string, config: WhatsAppClientOptions): void {
-    if (!this.isSandboxConfig(config)) {
+    if (!isSandboxConfig(config)) {
       return;
     }
     const recipients = config.testRecipients ?? [];
