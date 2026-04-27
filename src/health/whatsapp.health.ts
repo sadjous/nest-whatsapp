@@ -9,6 +9,7 @@ import {
   WHATSAPP_RUNTIME_OPTIONS,
   type WhatsAppRuntimeOptions,
 } from '../interfaces/whatsapp-runtime-options.interface';
+import { graphApiUrl } from '../services/whatsapp-client.utils';
 
 export interface HealthIndicatorResult {
   [key: string]: {
@@ -47,7 +48,7 @@ export class WhatsAppHealthIndicator {
       });
     }
     const version = this.runtimeOptions?.apiVersion ?? 'v25.0';
-    const url = `https://graph.facebook.com/${version}`;
+    const url = graphApiUrl(version);
     try {
       await firstValueFrom(
         this.httpService.get(url, {
