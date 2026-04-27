@@ -348,13 +348,13 @@ describe('WhatsAppService extra coverage', () => {
     expect(httpService.post).toHaveBeenCalled();
   });
 
-  it('network error (ECONNABORTED) is retried then throws', async () => {
+  it('network error (ECONNABORTED) is retried then throws a safe error', async () => {
     (httpService.post as jest.Mock).mockReturnValue(throwError(() => ({ code: 'ECONNABORTED' })));
     const svc = new WhatsAppService(httpService, sandboxConfig, liveConfig, undefined, {
       httpRetries: 0,
     });
-    await expect(svc.sendText('+111', 'hi', WhatsAppMode.SANDBOX)).rejects.toMatchObject({
-      code: 'ECONNABORTED',
-    });
+    await expect(svc.sendText('+111', 'hi', WhatsAppMode.SANDBOX)).rejects.toThrow(
+      'WhatsApp API network error (ECONNABORTED)'
+    );
   });
 });

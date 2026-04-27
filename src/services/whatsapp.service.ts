@@ -33,6 +33,7 @@ import {
   isSandboxConfig,
   resolveClientConfig,
   resolveAuthToken,
+  graphApiUrl,
 } from './whatsapp-client.utils';
 
 type AxiosLikeError = {
@@ -94,9 +95,8 @@ export class WhatsAppService implements OnModuleInit {
 
   private getEndpoint(config: WhatsAppClientOptions): string {
     const v = this.runtime.apiVersion;
-    return isLiveConfig(config)
-      ? `https://graph.facebook.com/${v}/${config.phoneNumberId}/messages`
-      : `https://graph.facebook.com/${v}/${config.testPhoneNumberId}/messages`;
+    const id = isLiveConfig(config) ? config.phoneNumberId : config.testPhoneNumberId;
+    return graphApiUrl(v, id, 'messages');
   }
 
   /** Resolves a string URL or typed WhatsAppMediaSource into a Graph API media field. */
@@ -112,7 +112,7 @@ export class WhatsAppService implements OnModuleInit {
   private getPhoneNumberBaseUrl(config: WhatsAppClientOptions): string {
     const v = this.runtime.apiVersion;
     const phoneNumberId = isLiveConfig(config) ? config.phoneNumberId : config.testPhoneNumberId;
-    return `https://graph.facebook.com/${v}/${phoneNumberId}`;
+    return graphApiUrl(v, phoneNumberId);
   }
 
   private async postWithRetry(
@@ -172,7 +172,7 @@ export class WhatsAppService implements OnModuleInit {
   }
 
   private throwMappedError(
-    original: unknown,
+    _original: unknown,
     parsed: ParsedHttpError,
     labels: { type: WhatsAppMessageType; mode: WhatsAppMode },
     endTimer: ((l?: { status?: string }) => void) | undefined
@@ -183,10 +183,12 @@ export class WhatsAppService implements OnModuleInit {
     }
     const errStatus = parsed.status ? String(parsed.status) : (parsed.code ?? 'error');
     this.recordError(labels, endTimer, errStatus);
-    if (original instanceof Error) throw original;
-    throw Object.assign(
-      new Error(parsed.code ?? String(original)),
-      original as Record<string, unknown>
+    throw new Error(
+      typeof parsed.status === 'number'
+        ? `WhatsApp API error (HTTP ${parsed.status})`
+        : parsed.code
+          ? `WhatsApp API network error (${parsed.code})`
+          : 'WhatsApp API error'
     );
   }
 

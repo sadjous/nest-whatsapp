@@ -8,15 +8,12 @@ import {
   type WhatsAppSandboxOptions,
   type WhatsAppLiveOptions,
 } from '../interfaces/whatsapp-client-options.interface';
-import { resolveClientConfig, resolveAuthToken } from './whatsapp-client.utils';
+import { resolveClientConfig, resolveAuthToken, graphApiUrl } from './whatsapp-client.utils';
 import {
   WHATSAPP_RUNTIME_OPTIONS,
   type WhatsAppRuntimeOptions,
 } from '../interfaces/whatsapp-runtime-options.interface';
-import {
-  WhatsAppAuthException,
-  WhatsAppRateLimitException,
-} from '../exceptions/whatsapp.exceptions';
+import { wrapGraphApiError } from '../utils/whatsapp-error.utils';
 import type {
   WhatsAppPhoneNumber,
   WhatsAppPhoneNumberListResponse,
@@ -59,11 +56,7 @@ export class WhatsAppPhoneNumbersService {
   }
 
   private mapError(e: unknown): never {
-    type AxiosLike = { response?: { status?: number } };
-    const status = (e as AxiosLike)?.response?.status;
-    if (status === 401 || status === 403) throw new WhatsAppAuthException();
-    if (status === 429) throw new WhatsAppRateLimitException();
-    throw e;
+    wrapGraphApiError(e);
   }
 
   /** Normalise the raw Graph API response keys to camelCase. */
@@ -85,7 +78,7 @@ export class WhatsAppPhoneNumbersService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<WhatsAppPhoneNumber[]> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${wabaId}/phone_numbers`;
+    const url = graphApiUrl(this.apiVersion, wabaId, 'phone_numbers');
     this.logger.log(`listPhoneNumbers wabaId=${wabaId} client=${clientName}`);
     try {
       const res = await lastValueFrom(
@@ -105,7 +98,7 @@ export class WhatsAppPhoneNumbersService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<WhatsAppPhoneNumber> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${phoneNumberId}`;
+    const url = graphApiUrl(this.apiVersion, phoneNumberId);
     this.logger.log(`getPhoneNumber phoneNumberId=${phoneNumberId} client=${clientName}`);
     try {
       const res = await lastValueFrom(
@@ -129,7 +122,7 @@ export class WhatsAppPhoneNumbersService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${phoneNumberId}/request_code`;
+    const url = graphApiUrl(this.apiVersion, phoneNumberId, 'request_code');
     this.logger.log(
       `requestVerificationCode phoneNumberId=${phoneNumberId} method=${codeMethod} client=${clientName}`
     );
@@ -154,7 +147,7 @@ export class WhatsAppPhoneNumbersService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${phoneNumberId}/verify_code`;
+    const url = graphApiUrl(this.apiVersion, phoneNumberId, 'verify_code');
     this.logger.log(`verifyCode phoneNumberId=${phoneNumberId} client=${clientName}`);
     try {
       const res = await lastValueFrom(
@@ -173,7 +166,7 @@ export class WhatsAppPhoneNumbersService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${phoneNumberId}`;
+    const url = graphApiUrl(this.apiVersion, phoneNumberId);
     this.logger.log(`setTwoStepPin phoneNumberId=${phoneNumberId} client=${clientName}`);
     try {
       const res = await lastValueFrom(

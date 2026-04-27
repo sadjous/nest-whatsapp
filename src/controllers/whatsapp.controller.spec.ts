@@ -68,7 +68,20 @@ describe('WhatsAppController', () => {
 
   it('should receive and emit event on valid signature', () => {
     configValues['WHATSAPP_APP_SECRET'] = 'app-secret';
-    const body = { test: 'data' };
+    const body: WhatsAppWebhookPayload = {
+      object: 'whatsapp_business_account',
+      entry: [
+        {
+          id: '123',
+          changes: [
+            {
+              field: 'messages',
+              value: { messaging_product: 'whatsapp', metadata: { phone_number_id: '456' } },
+            },
+          ],
+        },
+      ],
+    };
     const rawBody = Buffer.from(JSON.stringify(body));
     const signature =
       'sha256=' + crypto.createHmac('sha256', 'app-secret').update(rawBody).digest('hex');
@@ -79,6 +92,50 @@ describe('WhatsAppController', () => {
     expect(controller.receive(req, signature)).toEqual('EVENT_RECEIVED');
     expect(spy).toHaveBeenCalledWith('whatsapp.message_received', body);
     expect(metrics.incrementWebhookEvents).toHaveBeenCalled();
+  });
+
+  it('should reject webhook payload with invalid object field', () => {
+    configValues['WHATSAPP_APP_SECRET'] = 'app-secret';
+    const body = {
+      object: 'not_whatsapp',
+      entry: [
+        { id: '1', changes: [{ field: 'messages', value: { messaging_product: 'whatsapp' } }] },
+      ],
+    };
+    const rawBody = Buffer.from(JSON.stringify(body));
+    const signature =
+      'sha256=' + crypto.createHmac('sha256', 'app-secret').update(rawBody).digest('hex');
+    const req = unsafeCast<
+      Request & RawBodyRequestLike<WhatsAppWebhookPayload, Record<string, never>>
+    >({ body, rawBody });
+    expect(() => controller.receive(req, signature)).toThrow('unexpected object value');
+  });
+
+  it('should reject webhook payload with empty entry array', () => {
+    configValues['WHATSAPP_APP_SECRET'] = 'app-secret';
+    const body = { object: 'whatsapp_business_account', entry: [] };
+    const rawBody = Buffer.from(JSON.stringify(body));
+    const signature =
+      'sha256=' + crypto.createHmac('sha256', 'app-secret').update(rawBody).digest('hex');
+    const req = unsafeCast<
+      Request & RawBodyRequestLike<WhatsAppWebhookPayload, Record<string, never>>
+    >({ body, rawBody });
+    expect(() => controller.receive(req, signature)).toThrow('non-empty array');
+  });
+
+  it('should reject webhook payload with wrong messaging_product', () => {
+    configValues['WHATSAPP_APP_SECRET'] = 'app-secret';
+    const body = {
+      object: 'whatsapp_business_account',
+      entry: [{ id: '1', changes: [{ field: 'messages', value: { messaging_product: 'sms' } }] }],
+    };
+    const rawBody = Buffer.from(JSON.stringify(body));
+    const signature =
+      'sha256=' + crypto.createHmac('sha256', 'app-secret').update(rawBody).digest('hex');
+    const req = unsafeCast<
+      Request & RawBodyRequestLike<WhatsAppWebhookPayload, Record<string, never>>
+    >({ body, rawBody });
+    expect(() => controller.receive(req, signature)).toThrow('messaging_product');
   });
 
   it('should reject invalid signature', () => {
