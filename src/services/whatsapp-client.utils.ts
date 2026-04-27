@@ -5,6 +5,12 @@ import {
   type WhatsAppLiveOptions,
 } from '../interfaces/whatsapp-client-options.interface';
 
+export const GRAPH_API_BASE = 'https://graph.facebook.com';
+
+export function graphApiUrl(version: string, ...segments: string[]): string {
+  return [GRAPH_API_BASE, version, ...segments].join('/');
+}
+
 export function isLiveConfig(cfg: WhatsAppClientOptions): cfg is WhatsAppLiveOptions {
   return cfg.mode === WhatsAppMode.LIVE;
 }

@@ -8,7 +8,7 @@ import {
   type WhatsAppSandboxOptions,
   type WhatsAppLiveOptions,
 } from '../interfaces/whatsapp-client-options.interface';
-import { resolveClientConfig, resolveAuthToken } from './whatsapp-client.utils';
+import { resolveClientConfig, resolveAuthToken, graphApiUrl } from './whatsapp-client.utils';
 import {
   WHATSAPP_RUNTIME_OPTIONS,
   type WhatsAppRuntimeOptions,
@@ -74,7 +74,7 @@ export class WhatsAppTemplatesService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<WhatsAppTemplate[]> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${wabaId}/message_templates`;
+    const url = graphApiUrl(this.apiVersion, wabaId, 'message_templates');
     this.logger.log(`listTemplates wabaId=${wabaId} client=${clientName}`);
     try {
       const res = await lastValueFrom(
@@ -92,7 +92,7 @@ export class WhatsAppTemplatesService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<WhatsAppTemplate> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${templateId}`;
+    const url = graphApiUrl(this.apiVersion, templateId);
     this.logger.log(`getTemplate templateId=${templateId} client=${clientName}`);
     try {
       const res = await lastValueFrom(
@@ -111,7 +111,7 @@ export class WhatsAppTemplatesService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<{ id: string }> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${wabaId}/message_templates`;
+    const url = graphApiUrl(this.apiVersion, wabaId, 'message_templates');
     this.logger.log(`createTemplate name=${template.name} wabaId=${wabaId} client=${clientName}`);
     try {
       const res = await lastValueFrom(
@@ -130,7 +130,7 @@ export class WhatsAppTemplatesService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${templateId}`;
+    const url = graphApiUrl(this.apiVersion, templateId);
     this.logger.log(`updateTemplate templateId=${templateId} client=${clientName}`);
     try {
       const res = await lastValueFrom(
@@ -149,7 +149,7 @@ export class WhatsAppTemplatesService {
     clientName: WhatsAppMode = WhatsAppMode.LIVE
   ): Promise<boolean> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${wabaId}/message_templates`;
+    const url = graphApiUrl(this.apiVersion, wabaId, 'message_templates');
     this.logger.log(`deleteTemplate name=${name} wabaId=${wabaId} client=${clientName}`);
     try {
       const res = await lastValueFrom(

@@ -31,5 +31,6 @@ jobs:
             release
             deps
             deps-dev
+            security
             ci
             docs

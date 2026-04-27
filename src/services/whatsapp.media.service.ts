@@ -8,7 +8,12 @@ import {
   type WhatsAppSandboxOptions,
   type WhatsAppLiveOptions,
 } from '../interfaces/whatsapp-client-options.interface';
-import { resolveClientConfig, resolveAuthToken, isLiveConfig } from './whatsapp-client.utils';
+import {
+  resolveClientConfig,
+  resolveAuthToken,
+  isLiveConfig,
+  graphApiUrl,
+} from './whatsapp-client.utils';
 import {
   WHATSAPP_RUNTIME_OPTIONS,
   type WhatsAppRuntimeOptions,
@@ -88,7 +93,7 @@ export class WhatsAppMediaService {
   ): Promise<WhatsAppMediaUploadResponse> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const phoneNumberId = this.getPhoneNumberId(config);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${phoneNumberId}/media`;
+    const url = graphApiUrl(this.apiVersion, phoneNumberId, 'media');
     this.logger.log(`uploadMedia mimeType=${mimeType} client=${clientName}`);
 
     const formData = new FormData();
@@ -127,7 +132,7 @@ export class WhatsAppMediaService {
   ): Promise<WhatsAppMediaUrlResponse> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const phoneNumberId = this.getPhoneNumberId(config);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${mediaId}`;
+    const url = graphApiUrl(this.apiVersion, mediaId);
     this.logger.log(`getMediaUrl mediaId=${mediaId} client=${clientName}`);
     try {
       const res = await lastValueFrom(
@@ -157,7 +162,7 @@ export class WhatsAppMediaService {
   ): Promise<boolean> {
     const config = resolveClientConfig(clientName, this.sandboxConfig, this.liveConfig);
     const phoneNumberId = this.getPhoneNumberId(config);
-    const url = `https://graph.facebook.com/${this.apiVersion}/${mediaId}`;
+    const url = graphApiUrl(this.apiVersion, mediaId);
     this.logger.log(`deleteMedia mediaId=${mediaId} client=${clientName}`);
     try {
       const res = await lastValueFrom(
