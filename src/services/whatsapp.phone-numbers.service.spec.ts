@@ -109,10 +109,9 @@ describe('WhatsAppPhoneNumbersService', () => {
       await expect(service.getPhoneNumber('pn-123')).rejects.toThrow(WhatsAppRateLimitException);
     });
 
-    it('rethrows unknown errors', async () => {
-      const unknown = new Error('network fail');
-      httpGet.mockReturnValue(throwError(() => unknown));
-      await expect(service.getPhoneNumber('pn-123')).rejects.toThrow('network fail');
+    it('wraps unknown errors into a safe error without raw details', async () => {
+      httpGet.mockReturnValue(throwError(() => new Error('network fail')));
+      await expect(service.getPhoneNumber('pn-123')).rejects.toThrow('WhatsApp API error');
     });
   });
 

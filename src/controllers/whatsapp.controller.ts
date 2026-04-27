@@ -6,6 +6,7 @@ import {
   Headers,
   Inject,
   UnauthorizedException,
+  BadRequestException,
   Optional,
   PayloadTooLargeException,
 } from '@nestjs/common';
@@ -85,9 +86,29 @@ export class WhatsAppController {
     if (provided.length !== expected.length || !crypto.timingSafeEqual(provided, expected)) {
       throw new UnauthorizedException();
     }
+    this.validateWebhookPayload(req.body);
     this.events.emitMessageReceived(req.body);
     this.metrics?.incrementWebhookEvents();
     return 'EVENT_RECEIVED';
+  }
+
+  private validateWebhookPayload(body: WhatsAppWebhookPayload): void {
+    if (body?.object !== 'whatsapp_business_account') {
+      throw new BadRequestException('Invalid webhook: unexpected object value');
+    }
+    if (!Array.isArray(body?.entry) || body.entry.length === 0) {
+      throw new BadRequestException('Invalid webhook: entry must be a non-empty array');
+    }
+    for (const entry of body.entry) {
+      if (!Array.isArray(entry?.changes) || entry.changes.length === 0) {
+        throw new BadRequestException('Invalid webhook: changes must be a non-empty array');
+      }
+      for (const change of entry.changes) {
+        if (change?.value?.messaging_product !== 'whatsapp') {
+          throw new BadRequestException('Invalid webhook: messaging_product must be "whatsapp"');
+        }
+      }
+    }
   }
 
   private resolveMaxBodyBytes(): number {
